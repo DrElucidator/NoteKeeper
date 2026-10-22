@@ -7,7 +7,13 @@ using NoteKeeper.Aplicacao.Modulos.Notas;
 
 namespace NoteKeeper.Api.Modulos.Notas;
 
-public sealed record NotaRequest(
+public sealed record CriarNotaRequest(
+    string? Titulo,
+    string? Descricao,
+    IReadOnlyCollection<Guid>? CategoriaIds
+);
+
+public sealed record AtualizarNotaRequest(
     string? Titulo,
     string? Descricao,
     string? Status,
@@ -38,13 +44,12 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Criar(NotaRequest request, CancellationToken ct)
+    public async Task<IActionResult> Criar(CriarNotaRequest request, CancellationToken ct)
     {
         var command = new CriarNotaCommand(
             UserId(),
             request.Titulo,
             request.Descricao,
-            request.Status,
             request.CategoriaIds);
 
         var result = await mediator.Send(command, ct);
@@ -55,7 +60,7 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<IActionResult> Atualizar(Guid id, NotaRequest request, CancellationToken ct)
+    public async Task<IActionResult> Atualizar(Guid id, AtualizarNotaRequest request, CancellationToken ct)
     {
         var command = new AtualizarNotaCommand(
             UserId(),

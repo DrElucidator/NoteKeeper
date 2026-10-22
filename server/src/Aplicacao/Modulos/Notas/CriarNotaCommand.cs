@@ -10,21 +10,18 @@ public sealed record CriarNotaCommand(
     Guid UsuarioId,
     string? Titulo,
     string? Descricao,
-    string? Status,
-    IReadOnlyCollection<Guid>? CategoriaIds) : IRequest<Result<NotaDto>>;
+    IReadOnlyCollection<Guid>? CategoriaIds = null) : IRequest<Result<NotaDto>>;
 
 public sealed class CriarNotaCommandHandler(IRepositorioNota repositorio)
     : IRequestHandler<CriarNotaCommand, Result<NotaDto>>
 {
     public async Task<Result<NotaDto>> Handle(CriarNotaCommand command, CancellationToken ct)
     {
-        if (!StatusNotaParser.TryParse(command.Status, permitirPadraoAtivo: true, out var status))
-        {
-            return Result.Fail<NotaDto>(
-                Erros.Criar(TipoErro.Validacao, "Status deve ser Ativa ou Arquivada.", "status"));
-        }
-
-        var nota = new Nota(command.UsuarioId, command.Titulo ?? string.Empty, command.Descricao, status);
+        var nota = new Nota(
+            command.UsuarioId,
+            command.Titulo ?? string.Empty,
+            command.Descricao,
+            StatusNota.Ativa);
         var erros = nota.Validar();
 
         if (erros.Count > 0)

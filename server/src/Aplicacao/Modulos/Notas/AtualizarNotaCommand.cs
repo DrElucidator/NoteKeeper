@@ -25,7 +25,7 @@ public sealed class AtualizarNotaCommandHandler(IRepositorioNota repositorio)
             return Result.Fail<NotaDto>(Erros.Criar(TipoErro.NaoEncontrado, "Nota não encontrada."));
         }
 
-        if (!StatusNotaParser.TryParse(command.Status, permitirPadraoAtivo: false, out var status))
+        if (!StatusNotaParser.TryParse(command.Status, out var status))
         {
             return Result.Fail<NotaDto>(
                 Erros.Criar(TipoErro.Validacao, "Status deve ser Ativa ou Arquivada.", "status"));

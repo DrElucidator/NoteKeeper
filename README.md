@@ -61,6 +61,7 @@ O NoteKeeper é uma aplicação para registrar e organizar anotações em um só
 - **Título:** obrigatório, entre 2 e 100 caracteres;
 - **Descrição:** opcional, com até 300 caracteres;
 - **Status:** ativa ou arquivada;
+- Notas criadas começam com status **ativa**;
 - **Categorias:** opcionais; uma nota pode não estar associada a nenhuma categoria;
 - Não é permitido cadastrar duas notas com o mesmo título.
 

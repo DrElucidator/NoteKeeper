@@ -43,7 +43,6 @@ Content-Type: application/json
 {
   "titulo": "Ideia de projeto",
   "descricao": "Uma anotação curta.",
-  "status": "Ativa",
   "categoriaIds": []
 }
 

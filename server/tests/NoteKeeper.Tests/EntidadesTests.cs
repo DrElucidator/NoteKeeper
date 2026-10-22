@@ -1,5 +1,6 @@
 using NoteKeeper.Dominio.Modulos.Categorias;
 using NoteKeeper.Dominio.Modulos.Notas;
+using NoteKeeper.Aplicacao.Modulos.Notas;
 using Xunit;
 
 namespace NoteKeeper.Tests;
@@ -46,5 +47,65 @@ public sealed class EntidadesTests
         var nota = new Nota(Guid.NewGuid(), "  Minha Nota ", null, StatusNota.Arquivada);
         Assert.Equal("Minha Nota", nota.Titulo);
         Assert.Equal("MINHA NOTA", nota.TituloNormalizado);
+    }
+
+    [Fact]
+    public async Task CriarNota_SemStatusComecaAtiva()
+    {
+        var repositorio = new RepositorioNotaFalso();
+        var handler = new CriarNotaCommandHandler(repositorio);
+
+        var resultado = await handler.Handle(
+            new CriarNotaCommand(Guid.NewGuid(), "Anotação", null),
+            CancellationToken.None);
+
+        Assert.True(resultado.IsSuccess);
+        Assert.Equal(StatusNota.Ativa, repositorio.NotaSalva?.Status);
+    }
+
+    private sealed class RepositorioNotaFalso : IRepositorioNota
+    {
+        public Nota? NotaSalva { get; private set; }
+
+        public Task SalvarAsync(Nota nota, IReadOnlyCollection<Guid>? categoriaIds, CancellationToken cancellationToken)
+        {
+            NotaSalva = nota;
+            return Task.CompletedTask;
+        }
+
+        public Task ExcluirAsync(Nota nota, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IReadOnlyList<Nota>> ListarAsync(
+            Guid usuarioId,
+            IReadOnlyCollection<Guid>? categoriaIds,
+            CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Nota?> ObterAsync(Guid id, Guid usuarioId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> TituloExisteAsync(
+            Guid usuarioId,
+            string tituloNormalizado,
+            Guid? ignorarId,
+            CancellationToken cancellationToken)
+        {
+            return Task.FromResult(false);
+        }
+
+        public Task<IReadOnlyList<Guid>?> CategoriasPropriasAsync(
+            Guid usuarioId,
+            IReadOnlyCollection<Guid> ids,
+            CancellationToken cancellationToken)
+        {
+            return Task.FromResult<IReadOnlyList<Guid>?>(ids.ToArray());
+        }
     }
 }
