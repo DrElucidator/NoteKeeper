@@ -52,6 +52,7 @@ O NoteKeeper é uma aplicação para registrar e organizar anotações em um só
 - Registrar novas notas;
 - Visualizar todas as notas cadastradas;
 - Agrupar notas por uma ou mais categorias;
+- Listar notas associadas a uma ou mais categorias especificadas;
 - Editar notas existentes;
 - Excluir notas cadastradas.
 
@@ -62,3 +63,42 @@ O NoteKeeper é uma aplicação para registrar e organizar anotações em um só
 - **Status:** ativa ou arquivada;
 - **Categorias:** opcionais; uma nota pode não estar associada a nenhuma categoria;
 - Não é permitido cadastrar duas notas com o mesmo título.
+
+## API (server)
+
+A API está em `server/` e usa .NET 10, ASP.NET Core Identity, JWT Bearer, EF Core e SQL Server. Para executar, configure uma connection string SQL Server e uma chave JWT (mínimo 32 bytes) usando User Secrets:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:SqlServer" "<connection-string-sql-server>" --project server/src/Api/NoteKeeper.Api.csproj
+dotnet user-secrets set "Jwt:SigningKey" "<chave-aleatoria-com-pelo-menos-32-bytes>" --project server/src/Api/NoteKeeper.Api.csproj
+dotnet user-secrets set "LuckyPenny:LicenseKey" "<chave-de-licença-do-lucky-penny>" --project server/src/Api/NoteKeeper.Api.csproj
+dotnet tool restore --tool-manifest server/dotnet-tools.json
+dotnet ef database update --project server/src/Infraestrutura/NoteKeeper.Infraestrutura.csproj --startup-project server/src/Api/NoteKeeper.Api.csproj
+dotnet run --project server/src/Api/NoteKeeper.Api.csproj
+```
+
+Em desenvolvimento, a API aplica as migrations na inicialização. O Swagger/OpenAPI fica disponível em `/swagger`; exemplos de chamadas estão em `server/src/Api/NoteKeeper.Api.http`.
+
+| Método                 | Rota               | Acesso  | Operação                            |
+| ---------------------- | ------------------ | ------- | ----------------------------------- |
+| `POST`                 | `/auth/cadastro`   | Público | Cria conta com nome, e-mail e senha |
+| `POST`                 | `/auth/login`      | Público | Autentica e retorna JWT             |
+| `GET`                  | `/auth/me`         | Bearer  | Retorna os dados do usuário atual   |
+| `POST`                 | `/auth/logout`     | Bearer  | Revoga imediatamente o JWT atual    |
+| `GET`, `POST`          | `/categorias`      | Bearer  | Lista e cria categorias             |
+| `GET`, `PUT`, `DELETE` | `/categorias/{id}` | Bearer  | Consulta, edita e exclui categoria  |
+| `GET`, `POST`          | `/notas`           | Bearer  | Lista (com filtro opcional por categoria) e cria notas |
+| `GET`, `PUT`, `DELETE` | `/notas/{id}`      | Bearer  | Consulta, edita e exclui nota       |
+
+Os títulos são únicos por usuário sem diferenciar caixa ou espaços nas extremidades. A exclusão de categoria mantém as notas e remove somente as associações. O `PUT` da nota substitui a lista de categorias; use `categoriaIds: []` para remover todas. A sessão não usa refresh token: após a expiração, é necessário entrar novamente. Erros seguem `ProblemDetails` e erros de validação incluem mensagens por campo.
+
+Para filtrar notas por categorias, informe `categoriaIds` uma vez ou mais na query string de `GET /notas`, por exemplo `GET /notas?categoriaIds=<id1>&categoriaIds=<id2>`. O filtro é exclusivo: com vários IDs, retorna somente notas associadas a **todas** as categorias informadas. Sem o parâmetro, a rota lista todas as notas do usuário autenticado.
+
+Os casos de uso da camada de aplicação são implementados como requests e handlers do MediatR, com resultados e erros representados por FluentResults e convertidos para respostas HTTP pela API.
+
+Build e testes:
+
+```bash
+dotnet build server/NoteKeeper.slnx --configuration Release
+dotnet test server/NoteKeeper.slnx
+```
