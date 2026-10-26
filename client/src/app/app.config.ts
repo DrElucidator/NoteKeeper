@@ -7,7 +7,21 @@ import { environment } from '../environments/environment';
 import { authInterceptor } from './auth/auth.interceptor';
 import { API_BASE_URL, SESSION_STORAGE_KEY } from './auth/auth.tokens';
 
-const routes: Routes = [];
+const routes: Routes = [
+  { path: '', pathMatch: 'full', redirectTo: 'auth/sign-up' },
+  {
+    path: 'auth',
+    loadComponent: () => import('./auth/shell/auth-shell').then((component) => component.AuthShell),
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'sign-up' },
+      {
+        path: 'sign-up',
+        loadComponent: () => import('./auth/sign-up/sign-up').then((component) => component.SignUp),
+      },
+    ],
+  },
+  { path: '**', redirectTo: 'auth/sign-up' },
+];
 
 export const appConfig: ApplicationConfig = {
   providers: [

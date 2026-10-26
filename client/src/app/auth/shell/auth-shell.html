@@ -1,0 +1,36 @@
+<main class="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+  <section
+    class="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-950/10 lg:grid-cols-2"
+  >
+    <aside
+      class="relative overflow-hidden bg-indigo-950 px-8 py-10 text-white sm:px-12 lg:flex lg:flex-col lg:justify-between"
+    >
+      <div
+        class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(129,140,248,0.42),_transparent_42%)]"
+      ></div>
+
+      <div class="relative">
+        <div
+          class="inline-flex size-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20"
+        >
+          <svg lucideNotebookPen class="size-6" aria-hidden="true"></svg>
+        </div>
+
+        <h1 class="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl">NoteKeeper</h1>
+        <p class="mt-4 max-w-md text-base leading-7 text-indigo-100">
+          Keep your ideas, tasks, and important details organized in one private workspace.
+        </p>
+      </div>
+
+      <p class="relative mt-12 text-sm leading-6 text-indigo-200 lg:mt-0">
+        Every note and category belongs only to your account.
+      </p>
+    </aside>
+
+    <section class="flex items-center justify-center px-6 py-12 sm:px-12">
+      <div class="w-full max-w-md">
+        <router-outlet />
+      </div>
+    </section>
+  </section>
+</main>

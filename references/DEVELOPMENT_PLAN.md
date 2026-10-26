@@ -11,17 +11,17 @@ it, its implemented technologies, screenshots, and the public API integration.
 
 ## Planned stack
 
-| Area | Decision | Reason |
-| --- | --- | --- |
-| Framework | Angular with standalone components | Matches the established Academy projects and keeps routes and features modular. |
-| Language | TypeScript | Provides typed DTOs, forms, and API boundaries. |
-| Async flow | RxJS | Handles HTTP streams, loading state, errors, and reactive UI updates. |
-| Forms | Reactive Forms | Supports consistent validation for authentication, categories, and notes. |
-| Routing | Angular Router with guards | Protects the workspace and redirects unauthenticated users. |
-| HTTP | HttpClient with a JWT interceptor | Centralizes requests and adds the Bearer token to protected calls. |
-| Styling | Tailwind CSS | Required by the specification and consistent with recent frontend projects. |
-| Icons | Lucide Angular | Provides a small, accessible icon set without custom SVG duplication. |
-| Backend | Existing NoteKeeper REST API | The Angular app consumes the server contract; it does not reimplement the backend. |
+| Area       | Decision                           | Reason                                                                             |
+| ---------- | ---------------------------------- | ---------------------------------------------------------------------------------- |
+| Framework  | Angular with standalone components | Matches the established Academy projects and keeps routes and features modular.    |
+| Language   | TypeScript                         | Provides typed DTOs, forms, and API boundaries.                                    |
+| Async flow | RxJS                               | Handles HTTP streams, loading state, errors, and reactive UI updates.              |
+| Forms      | Angular Signal Forms               | Supports consistent validation for authentication, categories, and notes.          |
+| Routing    | Angular Router with guards         | Protects the workspace and redirects unauthenticated users.                        |
+| HTTP       | HttpClient with a JWT interceptor  | Centralizes requests and adds the Bearer token to protected calls.                 |
+| Styling    | Tailwind CSS                       | Required by the specification and consistent with recent frontend projects.        |
+| Icons      | Lucide Angular                     | Provides a small, accessible icon set without custom SVG duplication.              |
+| Backend    | Existing NoteKeeper REST API       | The Angular app consumes the server contract; it does not reimplement the backend. |
 
 ## Architecture boundaries
 
@@ -63,7 +63,7 @@ can reach the configured API URL.
 
 ### Phase 2: Authentication and session
 
-1. Implement register and sign-in pages with Reactive Forms.
+1. Implement register and sign-in pages with Angular Signal Forms.
 2. Add `AuthService` for `/auth/cadastro`, `/auth/login`, `/auth/me`, and
    `/auth/logout`.
 3. Persist the JWT session, add the HTTP interceptor, and add the route guard.
