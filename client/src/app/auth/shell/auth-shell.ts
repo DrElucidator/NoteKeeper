@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { LucideNotebookPen } from '@lucide/angular';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { LucideLockKeyhole, LucideNotebookPen } from '@lucide/angular';
 
 @Component({
-  imports: [LucideNotebookPen, RouterOutlet],
+  imports: [LucideLockKeyhole, LucideNotebookPen, RouterLink, RouterOutlet],
   selector: 'app-auth-shell',
   templateUrl: './auth-shell.html',
 })

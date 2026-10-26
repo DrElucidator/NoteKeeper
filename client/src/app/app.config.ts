@@ -9,7 +9,10 @@ import { authGuard } from './auth/auth.guard';
 import { API_BASE_URL, SESSION_STORAGE_KEY } from './auth/auth.tokens';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'workspace' },
+  {
+    path: '',
+    loadComponent: () => import('./home/home').then((component) => component.Home),
+  },
   {
     path: 'auth',
     loadComponent: () => import('./auth/shell/auth-shell').then((component) => component.AuthShell),
@@ -38,7 +41,7 @@ const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: 'workspace' },
+  { path: '**', redirectTo: '' },
 ];
 
 export const appConfig: ApplicationConfig = {

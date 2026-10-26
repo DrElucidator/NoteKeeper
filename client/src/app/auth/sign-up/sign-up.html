@@ -1,14 +1,14 @@
 <div>
-  <div class="mb-8">
+  <div class="mb-8 lg:mb-6">
     <p class="text-sm font-semibold tracking-wide text-indigo-700">PERSONAL WORKSPACE</p>
     <h2
       #pageTitle
       tabindex="-1"
-      class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 outline-none sm:text-4xl"
+      class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 outline-none lg:mt-2 sm:text-4xl"
     >
       Create your account
     </h2>
-    <p class="mt-3 text-sm leading-6 text-slate-600">
+    <p class="mt-3 text-sm leading-6 text-slate-600 lg:mt-2">
       Start organizing your notes and categories in one place.
     </p>
   </div>
@@ -32,15 +32,17 @@
     </div>
   }
 
-  <form (submit)="submit($event)" novalidate class="space-y-5">
+  <form (submit)="submit($event)" novalidate class="space-y-5 lg:space-y-4">
     <div>
-      <label for="sign-up-name" class="mb-2 block text-sm font-medium text-slate-800">Name</label>
+      <label for="sign-up-name" class="mb-2 block text-sm font-medium text-slate-800 lg:mb-1.5"
+        >Name</label
+      >
       <input
         id="sign-up-name"
         type="text"
         autocomplete="name"
         placeholder="Your name"
-        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600"
+        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600 lg:py-2.5"
         [formField]="signUpForm.name"
         [attr.aria-invalid]="signUpForm.name().touched() && signUpForm.name().invalid()"
         [attr.aria-describedby]="
@@ -55,14 +57,16 @@
     </div>
 
     <div>
-      <label for="sign-up-email" class="mb-2 block text-sm font-medium text-slate-800">Email</label>
+      <label for="sign-up-email" class="mb-2 block text-sm font-medium text-slate-800 lg:mb-1.5"
+        >Email</label
+      >
       <input
         id="sign-up-email"
         type="email"
         autocomplete="email"
         inputmode="email"
         placeholder="you@example.com"
-        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600"
+        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600 lg:py-2.5"
         [formField]="signUpForm.email"
         [attr.aria-invalid]="signUpForm.email().touched() && signUpForm.email().invalid()"
         [attr.aria-describedby]="
@@ -79,7 +83,7 @@
     </div>
 
     <div>
-      <label for="sign-up-password" class="mb-2 block text-sm font-medium text-slate-800"
+      <label for="sign-up-password" class="mb-2 block text-sm font-medium text-slate-800 lg:mb-1.5"
         >Password</label
       >
       <input
@@ -87,7 +91,7 @@
         type="password"
         autocomplete="new-password"
         placeholder="Create a secure password"
-        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600"
+        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600 lg:py-2.5"
         [formField]="signUpForm.password"
         [attr.aria-invalid]="signUpForm.password().touched() && signUpForm.password().invalid()"
         [attr.aria-describedby]="
@@ -96,7 +100,10 @@
             : 'sign-up-password-help'
         "
       />
-      <p id="sign-up-password-help" class="mt-2 text-xs leading-5 text-slate-600">
+      <p
+        id="sign-up-password-help"
+        class="mt-2 text-xs leading-5 text-slate-600 lg:mt-1 lg:leading-4"
+      >
         Use at least 8 characters, including a number and a special character.
       </p>
       @if (signUpForm.password().touched() && signUpForm.password().invalid()) {
@@ -108,7 +115,7 @@
 
     <button
       type="submit"
-      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 disabled:cursor-wait disabled:opacity-70"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 disabled:cursor-wait disabled:opacity-70 lg:py-3"
       [disabled]="isSubmitting()"
       [attr.aria-busy]="isSubmitting()"
     >
@@ -117,7 +124,7 @@
     </button>
   </form>
 
-  <p class="mt-7 text-center text-sm text-slate-600">
+  <p class="mt-7 text-center text-sm text-slate-600 lg:mt-5">
     Already have an account?
     <a
       routerLink="/auth/sign-in"

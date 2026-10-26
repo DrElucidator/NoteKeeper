@@ -1,0 +1,93 @@
+<main class="min-h-screen bg-slate-50 text-slate-950">
+  <app-navbar />
+
+  <section
+    class="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-8"
+  >
+    <div>
+      @if (session(); as session) {
+        <p class="text-sm font-semibold tracking-wide text-indigo-700">YOUR PRIVATE WORKSPACE</p>
+        <h1 class="mt-4 max-w-2xl text-4xl font-semibold tracking-tight sm:text-5xl">
+          Welcome back, {{ session.name }}.
+        </h1>
+        <p class="mt-5 max-w-xl text-lg leading-8 text-slate-600">
+          Your notes and categories are ready whenever you need them.
+        </p>
+        <a
+          routerLink="/workspace"
+          class="mt-8 inline-flex items-center gap-2 rounded-xl bg-indigo-700 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+        >
+          Open workspace
+          <svg lucideArrowRight class="size-4" aria-hidden="true"></svg>
+        </a>
+      } @else {
+        <p class="text-sm font-semibold tracking-wide text-indigo-700">NOTES THAT STAY ORGANIZED</p>
+        <h1 class="mt-4 max-w-2xl text-4xl font-semibold tracking-tight sm:text-6xl">
+          Make space for what matters.
+        </h1>
+        <p class="mt-5 max-w-xl text-lg leading-8 text-slate-600">
+          Capture ideas, organize details, and keep important information in one private place.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            routerLink="/auth/sign-up"
+            class="inline-flex items-center gap-2 rounded-xl bg-indigo-700 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+          >
+            Create account
+            <svg lucideArrowRight class="size-4" aria-hidden="true"></svg>
+          </a>
+          <a
+            routerLink="/auth/sign-in"
+            class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+          >
+            Sign in
+          </a>
+        </div>
+      }
+    </div>
+
+    <section
+      class="rounded-3xl bg-indigo-950 p-8 text-white shadow-xl shadow-indigo-950/10 sm:p-10"
+    >
+      <div class="flex items-start justify-between gap-6">
+        <span
+          class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-indigo-100"
+        >
+          PRIVATE BY DESIGN
+        </span>
+        <svg lucideLockKeyhole class="size-6 text-indigo-200" aria-hidden="true"></svg>
+      </div>
+
+      <h2 class="mt-10 text-2xl font-semibold leading-tight sm:text-3xl">
+        A calmer way to keep track of your work and ideas.
+      </h2>
+      <p class="mt-4 leading-7 text-indigo-100">
+        Create the notes you need, group them with categories, and return to them whenever the
+        moment is right.
+      </p>
+
+      <div class="mt-10 space-y-4 border-t border-white/10 pt-6 text-sm text-indigo-100">
+        <p class="flex items-center gap-3">
+          <svg lucideCheck class="size-4 text-indigo-200" aria-hidden="true"></svg>
+          Notes stay private to your account.
+        </p>
+        <p class="flex items-center gap-3">
+          <svg lucideCheck class="size-4 text-indigo-200" aria-hidden="true"></svg>
+          Categories make information easier to find.
+        </p>
+      </div>
+
+      <div class="mt-10 flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <span
+          class="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-white/10"
+        >
+          <svg lucidePlus class="size-5" aria-hidden="true"></svg>
+        </span>
+        <p class="text-sm leading-6 text-indigo-100">
+          Start with one note and build your own system.
+        </p>
+      </div>
+    </section>
+  </section>
+</main>

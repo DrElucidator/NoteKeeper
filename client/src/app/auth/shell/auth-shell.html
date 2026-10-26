@@ -1,36 +1,95 @@
-<main class="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8">
+<main
+  class="min-h-screen bg-slate-50 text-slate-950 lg:grid lg:grid-cols-[minmax(340px,0.88fr)_1.12fr]"
+>
   <section
-    class="mx-auto grid min-h-[calc(100vh-2rem)] max-w-6xl overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-950/10 lg:grid-cols-2"
+    class="relative hidden overflow-hidden bg-indigo-950 px-12 py-10 text-white lg:flex lg:flex-col lg:justify-between"
   >
-    <aside
-      class="relative overflow-hidden bg-indigo-950 px-8 py-10 text-white sm:px-12 lg:flex lg:flex-col lg:justify-between"
+    <div
+      class="absolute -left-40 top-1/4 size-96 rounded-full bg-indigo-400/20 blur-3xl"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="absolute -right-36 bottom-0 size-96 rounded-full bg-violet-300/10 blur-3xl"
+      aria-hidden="true"
+    ></div>
+
+    <a
+      routerLink="/"
+      class="relative inline-flex items-center gap-3 self-start rounded-lg text-lg font-semibold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-indigo-200"
     >
-      <div
-        class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(129,140,248,0.42),_transparent_42%)]"
-      ></div>
+      <span
+        class="grid size-10 place-items-center rounded-xl bg-indigo-200 text-indigo-950"
+        aria-hidden="true"
+      >
+        <svg lucideNotebookPen class="size-6"></svg>
+      </span>
+      NoteKeeper
+    </a>
 
-      <div class="relative">
-        <div
-          class="inline-flex size-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20"
-        >
-          <svg lucideNotebookPen class="size-6" aria-hidden="true"></svg>
-        </div>
-
-        <h1 class="mt-6 text-3xl font-semibold tracking-tight sm:text-4xl">NoteKeeper</h1>
-        <p class="mt-4 max-w-md text-base leading-7 text-indigo-100">
-          Keep your ideas, tasks, and important details organized in one private workspace.
-        </p>
-      </div>
-
-      <p class="relative mt-12 text-sm leading-6 text-indigo-200 lg:mt-0">
-        Every note and category belongs only to your account.
+    <div class="relative max-w-xl py-12">
+      <p
+        class="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium tracking-wide text-indigo-100"
+      >
+        <span class="size-1.5 rounded-full bg-indigo-200" aria-hidden="true"></span>
+        YOUR PRIVATE WORKSPACE
       </p>
-    </aside>
-
-    <section class="flex items-center justify-center px-6 py-12 sm:px-12">
-      <div class="w-full max-w-md">
-        <router-outlet />
+      <h1 class="text-4xl font-semibold leading-tight tracking-tight">
+        Keep every detail in its place.
+        <span class="text-indigo-200">Return to it when it matters.</span>
+      </h1>
+      <p class="mt-6 max-w-md text-base leading-7 text-indigo-100">
+        Capture notes, organize them with categories, and keep your information private to your
+        account.
+      </p>
+      <div
+        class="mt-12 flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.06] p-5"
+      >
+        <div
+          class="grid size-12 shrink-0 place-items-center rounded-xl bg-indigo-200/15 text-indigo-100"
+          aria-hidden="true"
+        >
+          <svg lucideLockKeyhole class="size-6"></svg>
+        </div>
+        <div>
+          <p class="font-medium">Your notes belong to you.</p>
+          <p class="mt-1 text-sm text-indigo-200">
+            Access your own workspace with one secure account.
+          </p>
+        </div>
       </div>
-    </section>
+    </div>
+
+    <p class="relative text-xs text-indigo-200">
+      © 2026 NoteKeeper. Private notes, clearly organized.
+    </p>
+  </section>
+
+  <section
+    class="flex min-h-screen flex-col px-5 py-6 sm:px-10 lg:items-center lg:justify-center lg:px-12 lg:py-6"
+  >
+    <a
+      routerLink="/"
+      class="mb-12 inline-flex items-center gap-2 self-start text-base font-semibold tracking-tight text-slate-950 lg:hidden"
+    >
+      <span
+        class="grid size-9 place-items-center rounded-xl bg-indigo-950 text-indigo-100"
+        aria-hidden="true"
+      >
+        <svg lucideNotebookPen class="size-5"></svg>
+      </span>
+      NoteKeeper
+    </a>
+
+    <div class="w-full max-w-md">
+      <router-outlet />
+
+      <p class="mt-10 text-center text-xs leading-5 text-slate-500 lg:mt-6">
+        By continuing, you agree to use your workspace responsibly.
+      </p>
+    </div>
+
+    <p class="mt-auto pt-10 text-center text-xs text-slate-500 lg:hidden">
+      © 2026 NoteKeeper. Private notes, clearly organized.
+    </p>
   </section>
 </main>
