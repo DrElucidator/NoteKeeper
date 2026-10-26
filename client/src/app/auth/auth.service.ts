@@ -41,6 +41,17 @@ export class AuthService {
       .pipe(finalize(() => this.clearSession()));
   }
 
+  hasValidSession(): boolean {
+    const session = this.session();
+
+    if (this.isValidSession(session)) {
+      return true;
+    }
+
+    this.clearSession();
+    return false;
+  }
+
   clearSession(): void {
     localStorage.removeItem(this.sessionStorageKey);
     this.sessionState.set(null);
@@ -57,25 +68,39 @@ export class AuthService {
 
       if (!serializedSession) return null;
 
-      const session = JSON.parse(serializedSession) as Partial<Session>;
-      const expiration = Date.parse(session.expiresAtUtc ?? '');
+      const session = JSON.parse(serializedSession) as unknown;
 
-      if (
-        !session.userId ||
-        !session.name ||
-        !session.email ||
-        !session.accessToken ||
-        !Number.isFinite(expiration) ||
-        expiration <= Date.now()
-      ) {
+      if (!this.isValidSession(session)) {
         this.clearSession();
         return null;
       }
 
-      return session as Session;
+      return session;
     } catch {
       this.clearSession();
       return null;
     }
+  }
+
+  private isValidSession(session: unknown): session is Session {
+    if (!session || typeof session !== 'object') {
+      return false;
+    }
+
+    const value = session as Partial<Session>;
+    const expiration = Date.parse(value.expiresAtUtc ?? '');
+
+    return (
+      typeof value.userId === 'string' &&
+      typeof value.name === 'string' &&
+      typeof value.email === 'string' &&
+      typeof value.accessToken === 'string' &&
+      value.userId.length > 0 &&
+      value.name.length > 0 &&
+      value.email.length > 0 &&
+      value.accessToken.length > 0 &&
+      Number.isFinite(expiration) &&
+      expiration > Date.now()
+    );
   }
 }
