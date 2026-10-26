@@ -1,20 +1,22 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { FormField, email, form, minLength, required } from '@angular/forms/signals';
-import { RouterLink } from '@angular/router';
-import { LucideCheckCircle2, LucideLogIn } from '@lucide/angular';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { LucideLogIn } from '@lucide/angular';
 
 import { ProblemDetails } from '../../shared/models/problem-details.model';
 import { SignInFormValue } from '../auth.models';
 import { AuthService } from '../auth.service';
 
 @Component({
-  imports: [FormField, LucideCheckCircle2, LucideLogIn, RouterLink],
+  imports: [FormField, LucideLogIn, RouterLink],
   selector: 'app-sign-in',
   templateUrl: './sign-in.html',
 })
 export class SignIn {
   private readonly authService = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly pageTitle = viewChild<ElementRef<HTMLHeadingElement>>('pageTitle');
 
   protected readonly model = signal<SignInFormValue>({ email: '', password: '' });
@@ -26,7 +28,6 @@ export class SignIn {
   });
 
   protected readonly errorMessage = signal('');
-  protected readonly successMessage = signal('');
   protected readonly isSubmitting = signal(false);
 
   constructor() {
@@ -44,13 +45,12 @@ export class SignIn {
     }
 
     this.errorMessage.set('');
-    this.successMessage.set('');
     this.isSubmitting.set(true);
 
     this.authService.signIn(this.model()).subscribe({
-      next: (session) => {
+      next: () => {
         this.isSubmitting.set(false);
-        this.successMessage.set(`Welcome back, ${session.name}.`);
+        void this.router.navigateByUrl(this.getRedirectUrl());
       },
       error: (response: HttpErrorResponse) => {
         this.isSubmitting.set(false);
@@ -67,5 +67,11 @@ export class SignIn {
     const problem = response.error as ProblemDetails | null;
 
     return problem?.detail ?? 'We could not sign you in. Try again.';
+  }
+
+  private getRedirectUrl(): string {
+    const redirectTo = this.route.snapshot.queryParamMap.get('redirectTo');
+
+    return redirectTo?.startsWith('/') ? redirectTo : '/workspace';
   }
 }

@@ -5,10 +5,11 @@ import { provideLucideConfig } from '@lucide/angular';
 
 import { environment } from '../environments/environment';
 import { authInterceptor } from './auth/auth.interceptor';
+import { authGuard } from './auth/auth.guard';
 import { API_BASE_URL, SESSION_STORAGE_KEY } from './auth/auth.tokens';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'auth/sign-in' },
+  { path: '', pathMatch: 'full', redirectTo: 'workspace' },
   {
     path: 'auth',
     loadComponent: () => import('./auth/shell/auth-shell').then((component) => component.AuthShell),
@@ -24,7 +25,20 @@ const routes: Routes = [
       },
     ],
   },
-  { path: '**', redirectTo: 'auth/sign-in' },
+  {
+    path: 'workspace',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./workspace/shell/workspace-shell').then((component) => component.WorkspaceShell),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./workspace/home/workspace-home').then((component) => component.WorkspaceHome),
+      },
+    ],
+  },
+  { path: '**', redirectTo: 'workspace' },
 ];
 
 export const appConfig: ApplicationConfig = {
