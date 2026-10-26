@@ -71,13 +71,13 @@ export class AuthService {
       const session = JSON.parse(serializedSession) as unknown;
 
       if (!this.isValidSession(session)) {
-        this.clearSession();
+        localStorage.removeItem(this.sessionStorageKey);
         return null;
       }
 
       return session;
     } catch {
-      this.clearSession();
+      localStorage.removeItem(this.sessionStorageKey);
       return null;
     }
   }
