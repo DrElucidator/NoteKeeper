@@ -1,0 +1,102 @@
+<div>
+  <div class="mb-8">
+    <p class="text-sm font-semibold tracking-wide text-indigo-700">WELCOME BACK</p>
+    <h2
+      #pageTitle
+      tabindex="-1"
+      class="mt-3 text-3xl font-semibold tracking-tight text-slate-950 outline-none sm:text-4xl"
+    >
+      Sign in to NoteKeeper
+    </h2>
+    <p class="mt-3 text-sm leading-6 text-slate-600">Access your private notes and categories.</p>
+  </div>
+
+  @if (errorMessage()) {
+    <div
+      class="mb-5 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900"
+      role="alert"
+    >
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (successMessage()) {
+    <div
+      class="mb-5 flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
+      role="status"
+    >
+      <svg lucideCheckCircle2 class="mt-0.5 size-5 shrink-0" aria-hidden="true"></svg>
+      <p>{{ successMessage() }}</p>
+    </div>
+  }
+
+  <form (submit)="submit($event)" novalidate class="space-y-5">
+    <div>
+      <label for="sign-in-email" class="mb-2 block text-sm font-medium text-slate-800">Email</label>
+      <input
+        id="sign-in-email"
+        type="email"
+        autocomplete="email"
+        inputmode="email"
+        placeholder="you@example.com"
+        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600"
+        [formField]="signInForm.email"
+        [attr.aria-invalid]="signInForm.email().touched() && signInForm.email().invalid()"
+        [attr.aria-describedby]="
+          signInForm.email().touched() && signInForm.email().invalid()
+            ? 'sign-in-email-error'
+            : null
+        "
+      />
+      @if (signInForm.email().touched() && signInForm.email().invalid()) {
+        <p id="sign-in-email-error" class="mt-1 text-sm text-rose-700">
+          {{ signInForm.email().errors()[0].message }}
+        </p>
+      }
+    </div>
+
+    <div>
+      <label for="sign-in-password" class="mb-2 block text-sm font-medium text-slate-800"
+        >Password</label
+      >
+      <input
+        id="sign-in-password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition placeholder:text-slate-400 hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15 aria-[invalid=true]:border-rose-600"
+        [formField]="signInForm.password"
+        [attr.aria-invalid]="signInForm.password().touched() && signInForm.password().invalid()"
+        [attr.aria-describedby]="
+          signInForm.password().touched() && signInForm.password().invalid()
+            ? 'sign-in-password-error'
+            : null
+        "
+      />
+      @if (signInForm.password().touched() && signInForm.password().invalid()) {
+        <p id="sign-in-password-error" class="mt-1 text-sm text-rose-700">
+          {{ signInForm.password().errors()[0].message }}
+        </p>
+      }
+    </div>
+
+    <button
+      type="submit"
+      class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-700 px-5 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 disabled:cursor-wait disabled:opacity-70"
+      [disabled]="isSubmitting()"
+      [attr.aria-busy]="isSubmitting()"
+    >
+      Sign in
+      <svg lucideLogIn class="size-4" aria-hidden="true"></svg>
+    </button>
+  </form>
+
+  <p class="mt-7 text-center text-sm text-slate-600">
+    New to NoteKeeper?
+    <a
+      routerLink="/auth/sign-up"
+      class="font-semibold text-indigo-700 underline decoration-indigo-300 underline-offset-4 hover:text-indigo-900 focus-visible:rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+      >Create an account</a
+    >
+  </p>
+</div>

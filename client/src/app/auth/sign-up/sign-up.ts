@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { FormField, email, form, minLength, pattern, required } from '@angular/forms/signals';
+import { RouterLink } from '@angular/router';
 import { LucideCheckCircle2, LucideUserPlus } from '@lucide/angular';
 
 import { SignUpFormValue } from '../auth.models';
@@ -8,7 +9,7 @@ import { AuthService } from '../auth.service';
 import { ProblemDetails } from '../../shared/models/problem-details.model';
 
 @Component({
-  imports: [FormField, LucideCheckCircle2, LucideUserPlus],
+  imports: [FormField, LucideCheckCircle2, LucideUserPlus, RouterLink],
   selector: 'app-sign-up',
   templateUrl: './sign-up.html',
 })

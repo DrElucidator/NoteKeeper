@@ -8,19 +8,23 @@ import { authInterceptor } from './auth/auth.interceptor';
 import { API_BASE_URL, SESSION_STORAGE_KEY } from './auth/auth.tokens';
 
 const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'auth/sign-up' },
+  { path: '', pathMatch: 'full', redirectTo: 'auth/sign-in' },
   {
     path: 'auth',
     loadComponent: () => import('./auth/shell/auth-shell').then((component) => component.AuthShell),
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'sign-up' },
+      { path: '', pathMatch: 'full', redirectTo: 'sign-in' },
+      {
+        path: 'sign-in',
+        loadComponent: () => import('./auth/sign-in/sign-in').then((component) => component.SignIn),
+      },
       {
         path: 'sign-up',
         loadComponent: () => import('./auth/sign-up/sign-up').then((component) => component.SignUp),
       },
     ],
   },
-  { path: '**', redirectTo: 'auth/sign-up' },
+  { path: '**', redirectTo: 'auth/sign-in' },
 ];
 
 export const appConfig: ApplicationConfig = {
