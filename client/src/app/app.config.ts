@@ -50,6 +50,13 @@ const routes: Routes = [
         loadComponent: () =>
           import('./categories/list/categories-list').then((component) => component.CategoriesList),
       },
+      {
+        path: 'categories/new',
+        loadComponent: () =>
+          import('./categories/create/category-create').then(
+            (component) => component.CategoryCreate,
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

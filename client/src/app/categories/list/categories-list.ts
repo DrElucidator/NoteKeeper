@@ -1,13 +1,14 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
-import { LucideAlertCircle, LucideRefreshCw, LucideTags } from '@lucide/angular';
+import { RouterLink } from '@angular/router';
+import { LucideAlertCircle, LucidePlus, LucideRefreshCw, LucideTags } from '@lucide/angular';
 
 import { ProblemDetails } from '../../shared/models/problem-details.model';
 import { Category } from '../category.models';
 import { CategoriesService } from '../categories.service';
 
 @Component({
-  imports: [LucideAlertCircle, LucideRefreshCw, LucideTags],
+  imports: [LucideAlertCircle, LucidePlus, LucideRefreshCw, LucideTags, RouterLink],
   selector: 'app-categories-list',
   templateUrl: './categories-list.html',
 })
