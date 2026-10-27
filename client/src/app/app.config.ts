@@ -45,6 +45,11 @@ const routes: Routes = [
         loadComponent: () =>
           import('./workspace/home/workspace-home').then((component) => component.WorkspaceHome),
       },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./categories/list/categories-list').then((component) => component.CategoriesList),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

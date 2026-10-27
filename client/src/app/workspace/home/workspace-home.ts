@@ -1,10 +1,11 @@
 import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { LucideLayoutDashboard, LucideStickyNote, LucideTags } from '@lucide/angular';
 
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
-  imports: [LucideLayoutDashboard, LucideStickyNote, LucideTags],
+  imports: [LucideLayoutDashboard, LucideStickyNote, LucideTags, RouterLink],
   selector: 'app-workspace-home',
   templateUrl: './workspace-home.html',
 })
