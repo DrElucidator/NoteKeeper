@@ -17,3 +17,7 @@ export interface SaveNoteFormValue {
   description: string;
   categoryIds: string[];
 }
+
+export interface UpdateNoteFormValue extends SaveNoteFormValue {
+  status: NoteStatus;
+}
