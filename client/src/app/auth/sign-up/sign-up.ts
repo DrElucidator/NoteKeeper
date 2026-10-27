@@ -1,20 +1,21 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { FormField, email, form, minLength, pattern, required } from '@angular/forms/signals';
-import { RouterLink } from '@angular/router';
-import { LucideCheckCircle2, LucideUserPlus } from '@lucide/angular';
+import { Router, RouterLink } from '@angular/router';
+import { LucideUserPlus } from '@lucide/angular';
 
 import { SignUpFormValue } from '../auth.models';
 import { AuthService } from '../auth.service';
 import { ProblemDetails } from '../../shared/models/problem-details.model';
 
 @Component({
-  imports: [FormField, LucideCheckCircle2, LucideUserPlus, RouterLink],
+  imports: [FormField, LucideUserPlus, RouterLink],
   selector: 'app-sign-up',
   templateUrl: './sign-up.html',
 })
 export class SignUp {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   private readonly pageTitle = viewChild<ElementRef<HTMLHeadingElement>>('pageTitle');
 
   protected readonly model = signal<SignUpFormValue>({ name: '', email: '', password: '' });
@@ -30,7 +31,6 @@ export class SignUp {
   });
 
   protected readonly errorMessage = signal('');
-  protected readonly successMessage = signal('');
   protected readonly isSubmitting = signal(false);
 
   constructor() {
@@ -48,14 +48,12 @@ export class SignUp {
     }
 
     this.errorMessage.set('');
-    this.successMessage.set('');
     this.isSubmitting.set(true);
 
     this.authService.signUp(this.model()).subscribe({
-      next: (user) => {
+      next: () => {
         this.isSubmitting.set(false);
-        this.successMessage.set(`Account created for ${user.name}.`);
-        this.model.set({ name: '', email: '', password: '' });
+        void this.router.navigateByUrl('/auth/sign-in');
       },
       error: (response: HttpErrorResponse) => {
         this.isSubmitting.set(false);
