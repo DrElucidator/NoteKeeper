@@ -1,0 +1,68 @@
+name: Deploy NoteKeeper API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/**'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore NoteKeeper.slnx
+        working-directory: server
+
+      - name: Build solution
+        run: dotnet build NoteKeeper.slnx --configuration Release --no-restore
+        working-directory: server
+
+      - name: Run tests
+        run: dotnet test NoteKeeper.slnx --configuration Release --no-build
+        working-directory: server
+
+      - name: Restore EF Core tools
+        run: dotnet tool restore --tool-manifest dotnet-tools.json
+        working-directory: server
+
+      - name: Apply database migrations
+        run: >
+          dotnet ef database update
+          --project src/Infraestrutura/NoteKeeper.Infraestrutura.csproj
+          --startup-project src/Api/NoteKeeper.Api.csproj
+          --configuration Release
+          --no-build
+        working-directory: server
+        env:
+          ConnectionStrings__SqlServer: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+
+      - name: Publish API
+        run: >
+          dotnet publish src/Api/NoteKeeper.Api.csproj
+          --configuration Release
+          --no-build
+          --output "${{ runner.temp }}/notekeeper-api"
+        working-directory: server
+
+      - name: Deploy API to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: notekeeper-api-aleclui
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ runner.temp }}/notekeeper-api
