@@ -62,6 +62,11 @@ const routes: Routes = [
         loadComponent: () =>
           import('./categories/list/categories-list').then((component) => component.CategoriesList),
       },
+      {
+        path: 'notes',
+        loadComponent: () =>
+          import('./notes/list/notes-list').then((component) => component.NotesList),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

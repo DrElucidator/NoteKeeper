@@ -1,11 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { LucideLogIn, LucideLogOut, LucideNotebookPen } from '@lucide/angular';
 
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
-  imports: [LucideLogIn, LucideLogOut, LucideNotebookPen, RouterLink],
+  imports: [LucideLogIn, LucideLogOut, LucideNotebookPen, RouterLink, RouterLinkActive],
   selector: 'app-navbar',
   templateUrl: './navbar.html',
 })

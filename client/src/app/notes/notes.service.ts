@@ -13,7 +13,8 @@ export class NotesService {
   private readonly apiBaseUrl = inject(API_BASE_URL);
 
   list(categoryIds: string[] = []): Observable<Note[]> {
-    const params = categoryIds.reduce(
+    const uniqueCategoryIds = [...new Set(categoryIds)];
+    const params = uniqueCategoryIds.reduce(
       (currentParams, categoryId) => currentParams.append('categoriaIds', categoryId),
       new HttpParams(),
     );

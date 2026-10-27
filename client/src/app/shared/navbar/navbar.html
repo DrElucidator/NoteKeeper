@@ -15,6 +15,22 @@
 
     <div class="flex items-center gap-3">
       @if (session(); as session) {
+        <nav class="hidden items-center gap-1 md:flex" aria-label="Workspace navigation">
+          <a
+            routerLink="/workspace/notes"
+            routerLinkActive="bg-indigo-50 text-indigo-800"
+            class="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            Notes
+          </a>
+          <a
+            routerLink="/workspace/categories"
+            routerLinkActive="bg-indigo-50 text-indigo-800"
+            class="rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950"
+          >
+            Categories
+          </a>
+        </nav>
         <span class="hidden text-sm text-slate-600 sm:inline">{{ session.name }}</span>
         <button
           type="button"
