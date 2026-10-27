@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import {
   LucideAlertCircle,
   LucideArchive,
@@ -29,6 +30,7 @@ import { NotesService } from '../notes.service';
     LucideSearch,
     LucideTag,
     LucideX,
+    RouterLink,
   ],
   selector: 'app-notes-list',
   templateUrl: './notes-list.html',

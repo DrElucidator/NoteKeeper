@@ -63,6 +63,11 @@ const routes: Routes = [
           import('./categories/list/categories-list').then((component) => component.CategoriesList),
       },
       {
+        path: 'notes/new',
+        loadComponent: () =>
+          import('./notes/create/note-create').then((component) => component.NoteCreate),
+      },
+      {
         path: 'notes',
         loadComponent: () =>
           import('./notes/list/notes-list').then((component) => component.NotesList),
