@@ -68,6 +68,11 @@ const routes: Routes = [
           import('./notes/create/note-create').then((component) => component.NoteCreate),
       },
       {
+        path: 'notes/:noteId/edit',
+        loadComponent: () =>
+          import('./notes/edit/note-edit').then((component) => component.NoteEdit),
+      },
+      {
         path: 'notes',
         loadComponent: () =>
           import('./notes/list/notes-list').then((component) => component.NotesList),
