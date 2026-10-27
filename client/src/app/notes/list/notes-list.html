@@ -23,6 +23,15 @@
     </a>
   </div>
 
+  @if (successMessage()) {
+    <div
+      class="mt-8 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
+      role="status"
+    >
+      {{ successMessage() }}
+    </div>
+  }
+
   <div class="mt-9 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
     <label class="block">
       <span class="sr-only">Search notes by title</span>
@@ -170,6 +179,14 @@
               >
                 <svg lucidePencil class="size-4" aria-hidden="true"></svg>
               </a>
+              <button
+                type="button"
+                class="inline-flex size-9 items-center justify-center rounded-lg text-rose-700 transition hover:bg-rose-50 hover:text-rose-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700"
+                [attr.aria-label]="'Delete ' + note.title"
+                (click)="requestDeletion(note)"
+              >
+                <svg lucideTrash2 class="size-4" aria-hidden="true"></svg>
+              </button>
             </div>
           </div>
 
@@ -200,3 +217,76 @@
     </div>
   }
 </section>
+
+@if (notePendingDeletion(); as note) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-4"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="delete-note-title"
+    aria-describedby="delete-note-description"
+    tabindex="-1"
+    (keydown.escape)="cancelDeletion()"
+  >
+    <section
+      class="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-start justify-between gap-4">
+        <span
+          class="inline-flex size-11 items-center justify-center rounded-2xl bg-rose-100 text-rose-700"
+          aria-hidden="true"
+        >
+          <svg lucideAlertTriangle class="size-5"></svg>
+        </span>
+        <button
+          type="button"
+          class="inline-flex size-9 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+          [disabled]="isDeleting()"
+          aria-label="Close confirmation"
+          (click)="cancelDeletion()"
+        >
+          <svg lucideX class="size-4" aria-hidden="true"></svg>
+        </button>
+      </div>
+
+      <h2 id="delete-note-title" class="mt-5 text-xl font-semibold tracking-tight text-slate-950">
+        Delete note?
+      </h2>
+      <p id="delete-note-description" class="mt-3 text-sm leading-6 text-slate-600">
+        <strong class="font-semibold text-slate-950">{{ note.title }}</strong> will be permanently
+        deleted. This action cannot be undone.
+      </p>
+
+      @if (deleteError()) {
+        <p
+          class="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-900"
+          role="alert"
+        >
+          {{ deleteError() }}
+        </p>
+      }
+
+      <div class="mt-6 flex flex-wrap justify-end gap-3">
+        <button
+          type="button"
+          class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+          [disabled]="isDeleting()"
+          (click)="cancelDeletion()"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="inline-flex items-center justify-center gap-2 rounded-xl bg-rose-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-700 disabled:cursor-wait disabled:opacity-70"
+          [disabled]="isDeleting()"
+          [attr.aria-busy]="isDeleting()"
+          (click)="confirmDeletion()"
+        >
+          Delete note
+          <svg lucideTrash2 class="size-4" aria-hidden="true"></svg>
+        </button>
+      </div>
+    </section>
+  </div>
+}

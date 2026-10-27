@@ -4,6 +4,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import {
   LucideAlertCircle,
+  LucideAlertTriangle,
   LucideArchive,
   LucideFileText,
   LucideFilter,
@@ -11,6 +12,7 @@ import {
   LucideRefreshCw,
   LucideSearch,
   LucideTag,
+  LucideTrash2,
   LucideX,
 } from '@lucide/angular';
 
@@ -24,6 +26,7 @@ import { NotesService } from '../notes.service';
   imports: [
     DatePipe,
     LucideAlertCircle,
+    LucideAlertTriangle,
     LucideArchive,
     LucideFileText,
     LucideFilter,
@@ -31,6 +34,7 @@ import { NotesService } from '../notes.service';
     LucideRefreshCw,
     LucideSearch,
     LucideTag,
+    LucideTrash2,
     LucideX,
     RouterLink,
   ],
@@ -42,11 +46,15 @@ export class NotesList {
   private readonly notesService = inject(NotesService);
 
   protected readonly categories = signal<Category[]>([]);
+  protected readonly deleteError = signal('');
   protected readonly errorMessage = signal('');
+  protected readonly isDeleting = signal(false);
   protected readonly isLoading = signal(true);
   protected readonly notes = signal<Note[]>([]);
+  protected readonly notePendingDeletion = signal<Note | null>(null);
   protected readonly searchQuery = signal('');
   protected readonly selectedCategoryIds = signal<string[]>([]);
+  protected readonly successMessage = signal('');
   protected readonly visibleNotes = computed(() => {
     const query = this.searchQuery().trim().toLocaleLowerCase();
 
@@ -94,6 +102,46 @@ export class NotesList {
     this.loadNotes();
   }
 
+  protected requestDeletion(note: Note): void {
+    this.notePendingDeletion.set(note);
+    this.deleteError.set('');
+  }
+
+  protected cancelDeletion(): void {
+    if (this.isDeleting()) {
+      return;
+    }
+
+    this.notePendingDeletion.set(null);
+    this.deleteError.set('');
+  }
+
+  protected confirmDeletion(): void {
+    const note = this.notePendingDeletion();
+
+    if (!note || this.isDeleting()) {
+      return;
+    }
+
+    this.isDeleting.set(true);
+    this.deleteError.set('');
+
+    this.notesService.delete(note.id).subscribe({
+      next: () => {
+        this.notes.update((notes) => notes.filter((currentNote) => currentNote.id !== note.id));
+        this.notePendingDeletion.set(null);
+        this.successMessage.set(`Note "${note.title}" was deleted.`);
+        this.isDeleting.set(false);
+      },
+      error: (response: HttpErrorResponse) => {
+        const problem = response.error as ProblemDetails | null;
+
+        this.deleteError.set(problem?.detail ?? 'We could not delete this note. Try again.');
+        this.isDeleting.set(false);
+      },
+    });
+  }
+
   private loadCategories(): void {
     this.categoriesService.list().subscribe({
       next: (categories) => this.categories.set(categories),
@@ -104,6 +152,7 @@ export class NotesList {
   private loadNotes(): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
+    this.successMessage.set('');
 
     this.notesService.list(this.selectedCategoryIds()).subscribe({
       next: (notes) => {
