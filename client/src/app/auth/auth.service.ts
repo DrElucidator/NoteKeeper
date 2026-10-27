@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, Signal, inject, signal } from '@angular/core';
-import { Observable, finalize, map, tap } from 'rxjs';
+import { Observable, catchError, finalize, map, of, tap } from 'rxjs';
 
 import { toSession, toSignInRequest, toSignUpRequest, toUser } from './auth.mappers';
 import { SessionResponse, UserResponse } from './auth.api-models';
@@ -35,6 +35,24 @@ export class AuthService {
     return this.http.get<UserResponse>(`${this.apiBaseUrl}/auth/me`).pipe(map(toUser));
   }
 
+  restoreSession(): Observable<void> {
+    if (!this.hasValidSession()) {
+      return of(undefined);
+    }
+
+    return this.getCurrentUser().pipe(
+      tap((user) => this.updateSessionUser(user)),
+      map(() => undefined),
+      catchError((response: HttpErrorResponse) => {
+        if (response.status === 401 || response.status === 403) {
+          this.clearSession();
+        }
+
+        return of(undefined);
+      }),
+    );
+  }
+
   signOut(): Observable<void> {
     return this.http
       .post<void>(`${this.apiBaseUrl}/auth/logout`, {})
@@ -60,6 +78,21 @@ export class AuthService {
   private saveSession(session: Session): void {
     localStorage.setItem(this.sessionStorageKey, JSON.stringify(session));
     this.sessionState.set(session);
+  }
+
+  private updateSessionUser(user: User): void {
+    const session = this.session();
+
+    if (!session) {
+      return;
+    }
+
+    this.saveSession({
+      ...session,
+      userId: user.id,
+      name: user.name,
+      email: user.email,
+    });
   }
 
   private readStoredSession(): Session | null {
