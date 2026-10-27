@@ -1,10 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
-import { FormField, maxLength, minLength, form, required } from '@angular/forms/signals';
+import { FormField } from '@angular/forms/signals';
 import { Router, RouterLink } from '@angular/router';
 import { LucideArrowLeft, LucidePlus, LucideTags } from '@lucide/angular';
 
 import { ProblemDetails } from '../../shared/models/problem-details.model';
+import { createCategoryForm } from '../category-form';
 import { SaveCategoryFormValue } from '../category.models';
 import { CategoriesService } from '../categories.service';
 
@@ -19,11 +20,7 @@ export class CategoryCreate {
   private readonly pageTitle = viewChild<ElementRef<HTMLHeadingElement>>('pageTitle');
 
   protected readonly model = signal<SaveCategoryFormValue>({ title: '' });
-  protected readonly categoryForm = form(this.model, (model) => {
-    required(model.title, { message: 'Enter a category title.' });
-    minLength(model.title, 2, { message: 'Use at least 2 characters.' });
-    maxLength(model.title, 100, { message: 'Use no more than 100 characters.' });
-  });
+  protected readonly categoryForm = createCategoryForm(this.model);
 
   protected readonly errorMessage = signal('');
   protected readonly titleError = signal('');

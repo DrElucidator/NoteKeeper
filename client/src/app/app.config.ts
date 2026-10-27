@@ -46,16 +46,21 @@ const routes: Routes = [
           import('./workspace/home/workspace-home').then((component) => component.WorkspaceHome),
       },
       {
-        path: 'categories',
-        loadComponent: () =>
-          import('./categories/list/categories-list').then((component) => component.CategoriesList),
-      },
-      {
         path: 'categories/new',
         loadComponent: () =>
           import('./categories/create/category-create').then(
             (component) => component.CategoryCreate,
           ),
+      },
+      {
+        path: 'categories/:categoryId/edit',
+        loadComponent: () =>
+          import('./categories/edit/category-edit').then((component) => component.CategoryEdit),
+      },
+      {
+        path: 'categories',
+        loadComponent: () =>
+          import('./categories/list/categories-list').then((component) => component.CategoriesList),
       },
     ],
   },
