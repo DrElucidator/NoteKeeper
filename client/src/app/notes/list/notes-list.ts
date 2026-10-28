@@ -5,7 +5,9 @@ import { RouterLink } from '@angular/router';
 import {
   LucideAlertCircle,
   LucideAlertTriangle,
+  LucideArrowDownAZ,
   LucideChevronDown,
+  LucideClock3,
   LucideFileText,
   LucideFlag,
   LucideFilter,
@@ -30,7 +32,9 @@ type NoteSort = 'priority' | 'updatedAt' | 'title';
     DatePipe,
     LucideAlertCircle,
     LucideAlertTriangle,
+    LucideArrowDownAZ,
     LucideChevronDown,
+    LucideClock3,
     LucideFileText,
     LucideFlag,
     LucideFilter,
@@ -52,6 +56,8 @@ export class NotesList {
   protected readonly categories = signal<Category[]>([]);
   protected readonly deleteError = signal('');
   protected readonly errorMessage = signal('');
+  protected readonly isFiltersOpen = signal(false);
+  protected readonly isSortMenuOpen = signal(false);
   protected readonly isDeleting = signal(false);
   protected readonly isLoading = signal(true);
   protected readonly isUpdatingPriorityId = signal<string | null>(null);
@@ -80,6 +86,12 @@ export class NotesList {
       this.selectedCategoryIds().length > 0 ||
       this.selectedPriorities().length > 0 ||
       this.selectedStatuses().length > 0,
+  );
+  protected readonly activeFilterCount = computed(
+    () =>
+      this.selectedCategoryIds().length +
+      this.selectedPriorities().length +
+      this.selectedStatuses().length,
   );
   protected readonly visibleNotes = computed(() => {
     const query = this.searchQuery().trim().toLocaleLowerCase();
@@ -132,6 +144,15 @@ export class NotesList {
 
   protected updateSort(sortBy: NoteSort): void {
     this.sortBy.set(sortBy);
+    this.isSortMenuOpen.set(false);
+  }
+
+  protected toggleSortMenu(): void {
+    this.isSortMenuOpen.update((isOpen) => !isOpen);
+  }
+
+  protected toggleFilters(): void {
+    this.isFiltersOpen.update((isOpen) => !isOpen);
   }
 
   protected clearFilters(): void {
