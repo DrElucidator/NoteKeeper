@@ -23,6 +23,8 @@ import { ProblemDetails } from '../../shared/models/problem-details.model';
 import { Note, NotePriority, NoteStatus } from '../note.models';
 import { NotesService } from '../notes.service';
 
+type NoteSort = 'priority' | 'updatedAt' | 'title';
+
 @Component({
   imports: [
     DatePipe,
@@ -56,20 +58,42 @@ export class NotesList {
   protected readonly isUpdatingStatusId = signal<string | null>(null);
   protected readonly notes = signal<Note[]>([]);
   protected readonly notePendingDeletion = signal<Note | null>(null);
+  protected readonly notePriorities: readonly NotePriority[] = ['Low', 'Medium', 'High', 'Urgent'];
+  protected readonly noteStatuses: readonly NoteStatus[] = [
+    'Pending',
+    'InProgress',
+    'Completed',
+    'Archived',
+  ];
   protected readonly searchQuery = signal('');
   protected readonly priorityMenuNoteId = signal<string | null>(null);
   protected readonly selectedCategoryIds = signal<string[]>([]);
+  protected readonly selectedPriorities = signal<NotePriority[]>([]);
+  protected readonly selectedStatuses = signal<NoteStatus[]>([]);
+  protected readonly sortBy = signal<NoteSort>('priority');
   protected readonly successMessage = signal('');
   protected readonly statusMenuNoteId = signal<string | null>(null);
   protected readonly statusError = signal('');
+  protected readonly hasActiveFilters = computed(
+    () =>
+      !!this.searchQuery() ||
+      this.selectedCategoryIds().length > 0 ||
+      this.selectedPriorities().length > 0 ||
+      this.selectedStatuses().length > 0,
+  );
   protected readonly visibleNotes = computed(() => {
     const query = this.searchQuery().trim().toLocaleLowerCase();
+    const selectedPriorities = this.selectedPriorities();
+    const selectedStatuses = this.selectedStatuses();
 
-    if (!query) {
-      return this.notes();
-    }
+    const filteredNotes = this.notes().filter(
+      (note) =>
+        (!query || note.title.toLocaleLowerCase().includes(query)) &&
+        (selectedPriorities.length === 0 || selectedPriorities.includes(note.priority)) &&
+        (selectedStatuses.length === 0 || selectedStatuses.includes(note.status)),
+    );
 
-    return this.notes().filter((note) => note.title.toLocaleLowerCase().includes(query));
+    return [...filteredNotes].sort((left, right) => this.compareNotes(left, right));
   });
 
   constructor() {
@@ -90,18 +114,48 @@ export class NotesList {
     this.loadNotes();
   }
 
+  protected togglePriority(priority: NotePriority): void {
+    this.selectedPriorities.update((priorities) =>
+      priorities.includes(priority)
+        ? priorities.filter((currentPriority) => currentPriority !== priority)
+        : [...priorities, priority],
+    );
+  }
+
+  protected toggleStatus(status: NoteStatus): void {
+    this.selectedStatuses.update((statuses) =>
+      statuses.includes(status)
+        ? statuses.filter((currentStatus) => currentStatus !== status)
+        : [...statuses, status],
+    );
+  }
+
+  protected updateSort(sortBy: NoteSort): void {
+    this.sortBy.set(sortBy);
+  }
+
   protected clearFilters(): void {
-    if (!this.searchQuery() && this.selectedCategoryIds().length === 0) {
+    if (!this.hasActiveFilters()) {
       return;
     }
 
     this.searchQuery.set('');
     this.selectedCategoryIds.set([]);
+    this.selectedPriorities.set([]);
+    this.selectedStatuses.set([]);
     this.loadNotes();
   }
 
   protected isCategorySelected(categoryId: string): boolean {
     return this.selectedCategoryIds().includes(categoryId);
+  }
+
+  protected isPrioritySelected(priority: NotePriority): boolean {
+    return this.selectedPriorities().includes(priority);
+  }
+
+  protected isStatusSelected(status: NoteStatus): boolean {
+    return this.selectedStatuses().includes(status);
   }
 
   protected retry(): void {
@@ -245,5 +299,32 @@ export class NotesList {
     const problem = response.error as ProblemDetails | null;
 
     this.errorMessage.set(problem?.detail ?? 'We could not load your notes. Try again.');
+  }
+
+  private compareNotes(left: Note, right: Note): number {
+    switch (this.sortBy()) {
+      case 'title':
+        return left.title.localeCompare(right.title);
+      case 'updatedAt':
+        return Date.parse(right.updatedAt) - Date.parse(left.updatedAt);
+      case 'priority': {
+        const byPriority = this.priorityRank(right.priority) - this.priorityRank(left.priority);
+
+        return byPriority || Date.parse(right.updatedAt) - Date.parse(left.updatedAt);
+      }
+    }
+  }
+
+  private priorityRank(priority: NotePriority): number {
+    switch (priority) {
+      case 'Urgent':
+        return 4;
+      case 'High':
+        return 3;
+      case 'Medium':
+        return 2;
+      case 'Low':
+        return 1;
+    }
   }
 }

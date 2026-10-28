@@ -60,14 +60,26 @@
       </span>
     </label>
 
-    @if (categories().length > 0) {
-      <div class="mt-5 border-t border-slate-100 pt-5">
-        <div class="flex items-center justify-between gap-4">
-          <p class="inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
-            <svg lucideFilter class="size-4 text-indigo-700" aria-hidden="true"></svg>
-            Filter by category
-          </p>
-          @if (searchQuery() || selectedCategoryIds().length > 0) {
+    <div class="mt-5 border-t border-slate-100 pt-5">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <p class="inline-flex items-center gap-2 text-sm font-semibold text-slate-800">
+          <svg lucideFilter class="size-4 text-indigo-700" aria-hidden="true"></svg>
+          Filters
+        </p>
+        <div class="flex items-center gap-3">
+          <label class="flex items-center gap-2 text-sm font-medium text-slate-600">
+            Sort
+            <select
+              class="rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-slate-800 outline-none transition hover:border-slate-400 focus:border-indigo-600 focus:ring-3 focus:ring-indigo-100"
+              [value]="sortBy()"
+              (change)="updateSort($any($event.target).value)"
+            >
+              <option value="priority">Priority</option>
+              <option value="updatedAt">Recently updated</option>
+              <option value="title">Title</option>
+            </select>
+          </label>
+          @if (hasActiveFilters()) {
             <button
               type="button"
               class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-700 transition hover:text-indigo-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
@@ -78,7 +90,56 @@
             </button>
           }
         </div>
-        <div class="mt-3 flex flex-wrap gap-2">
+      </div>
+
+      <div class="mt-5">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          @for (status of noteStatuses; track status) {
+            <button
+              type="button"
+              class="rounded-full border px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+              [class.border-indigo-700]="isStatusSelected(status)"
+              [class.bg-indigo-700]="isStatusSelected(status)"
+              [class.text-white]="isStatusSelected(status)"
+              [class.border-slate-300]="!isStatusSelected(status)"
+              [class.bg-white]="!isStatusSelected(status)"
+              [class.text-slate-700]="!isStatusSelected(status)"
+              [attr.aria-pressed]="isStatusSelected(status)"
+              (click)="toggleStatus(status)"
+            >
+              {{ status === 'InProgress' ? 'In progress' : status }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="mt-5">
+        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Priority</p>
+        <div class="mt-2 flex flex-wrap gap-2">
+          @for (priority of notePriorities; track priority) {
+            <button
+              type="button"
+              class="rounded-full border px-3 py-1.5 text-sm font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+              [class.border-indigo-700]="isPrioritySelected(priority)"
+              [class.bg-indigo-700]="isPrioritySelected(priority)"
+              [class.text-white]="isPrioritySelected(priority)"
+              [class.border-slate-300]="!isPrioritySelected(priority)"
+              [class.bg-white]="!isPrioritySelected(priority)"
+              [class.text-slate-700]="!isPrioritySelected(priority)"
+              [attr.aria-pressed]="isPrioritySelected(priority)"
+              (click)="togglePriority(priority)"
+            >
+              {{ priority }}
+            </button>
+          }
+        </div>
+      </div>
+
+      @if (categories().length > 0) {
+        <div class="mt-5">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Category</p>
+          <div class="mt-2 flex flex-wrap gap-2">
           @for (category of categories(); track category.id) {
             <button
               type="button"
@@ -96,8 +157,9 @@
             </button>
           }
         </div>
-      </div>
-    }
+        </div>
+      }
+    </div>
   </div>
 
   @if (isLoading()) {
