@@ -5,12 +5,9 @@ import { RouterLink } from '@angular/router';
 import {
   LucideAlertCircle,
   LucideAlertTriangle,
-  LucideArchive,
+  LucideChevronDown,
   LucideFileText,
   LucideFilter,
-  LucideCircleCheckBig,
-  LucideListTodo,
-  LucideLoaderCircle,
   LucidePencil,
   LucideRefreshCw,
   LucideSearch,
@@ -22,7 +19,7 @@ import {
 import { CategoriesService } from '../../categories/categories.service';
 import { Category } from '../../categories/category.models';
 import { ProblemDetails } from '../../shared/models/problem-details.model';
-import { Note } from '../note.models';
+import { Note, NoteStatus } from '../note.models';
 import { NotesService } from '../notes.service';
 
 @Component({
@@ -30,12 +27,9 @@ import { NotesService } from '../notes.service';
     DatePipe,
     LucideAlertCircle,
     LucideAlertTriangle,
-    LucideArchive,
-    LucideCircleCheckBig,
+    LucideChevronDown,
     LucideFileText,
     LucideFilter,
-    LucideListTodo,
-    LucideLoaderCircle,
     LucidePencil,
     LucideRefreshCw,
     LucideSearch,
@@ -56,11 +50,14 @@ export class NotesList {
   protected readonly errorMessage = signal('');
   protected readonly isDeleting = signal(false);
   protected readonly isLoading = signal(true);
+  protected readonly isUpdatingStatusId = signal<string | null>(null);
   protected readonly notes = signal<Note[]>([]);
   protected readonly notePendingDeletion = signal<Note | null>(null);
   protected readonly searchQuery = signal('');
   protected readonly selectedCategoryIds = signal<string[]>([]);
   protected readonly successMessage = signal('');
+  protected readonly statusMenuNoteId = signal<string | null>(null);
+  protected readonly statusError = signal('');
   protected readonly visibleNotes = computed(() => {
     const query = this.searchQuery().trim().toLocaleLowerCase();
 
@@ -111,6 +108,40 @@ export class NotesList {
   protected requestDeletion(note: Note): void {
     this.notePendingDeletion.set(note);
     this.deleteError.set('');
+  }
+
+  protected changeStatus(note: Note, status: NoteStatus): void {
+    if (note.status === status || this.isUpdatingStatusId()) {
+      this.statusMenuNoteId.set(null);
+      return;
+    }
+
+    this.isUpdatingStatusId.set(note.id);
+    this.statusMenuNoteId.set(null);
+    this.statusError.set('');
+    this.successMessage.set('');
+
+    this.notesService.updateStatus(note.id, status).subscribe({
+      next: (updatedNote) => {
+        this.notes.update((notes) =>
+          notes.map((currentNote) => (currentNote.id === updatedNote.id ? updatedNote : currentNote)),
+        );
+        this.successMessage.set(`Status for "${updatedNote.title}" was updated.`);
+        this.isUpdatingStatusId.set(null);
+      },
+      error: (response: HttpErrorResponse) => {
+        const problem = response.error as ProblemDetails | null;
+
+        this.statusError.set(problem?.detail ?? 'We could not update the note status. Try again.');
+        this.isUpdatingStatusId.set(null);
+      },
+    });
+  }
+
+  protected toggleStatusMenu(noteId: string): void {
+    this.statusMenuNoteId.update((currentNoteId) =>
+      currentNoteId === noteId ? null : noteId,
+    );
   }
 
   protected cancelDeletion(): void {

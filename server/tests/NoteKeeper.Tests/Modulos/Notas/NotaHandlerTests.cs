@@ -240,6 +240,39 @@ public sealed class NotaHandlerTests
     }
 
     [Fact]
+    public async Task AtualizarStatusNota_AlteraSomenteOStatusDaNota()
+    {
+        // Arrange
+        var usuarioId = Guid.NewGuid();
+        var nota = new Nota(usuarioId, "Lembrete", "Manter a descrição", StatusNota.Pendente);
+        var repositorio = new Mock<IRepositorioNota>();
+        repositorio
+            .Setup(x => x.ObterAsync(nota.Id, usuarioId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nota);
+        repositorio
+            .Setup(x => x.SalvarStatusAsync(nota, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var handler = new AtualizarStatusNotaCommandHandler(repositorio.Object);
+
+        // Act
+        var result = await handler.Handle(
+            new AtualizarStatusNotaCommand(usuarioId, nota.Id, "EmAndamento"),
+            CancellationToken.None);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal("EmAndamento", result.Value.Status);
+        Assert.Equal("Lembrete", result.Value.Titulo);
+        Assert.Equal("Manter a descrição", result.Value.Descricao);
+        repositorio.Verify(
+            x => x.SalvarStatusAsync(nota, It.IsAny<CancellationToken>()),
+            Times.Once);
+        repositorio.Verify(
+            x => x.SalvarAsync(It.IsAny<Nota>(), It.IsAny<IReadOnlyCollection<Guid>?>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
     public async Task ExcluirNota_QuandoExiste_ExcluiERetornaSucesso()
     {
         // Arrange

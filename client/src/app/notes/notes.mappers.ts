@@ -1,5 +1,10 @@
 import { toCategory } from '../categories/categories.mappers';
-import { CreateNoteRequest, NoteResponse, UpdateNoteRequest } from './notes.api-models';
+import {
+  CreateNoteRequest,
+  NoteResponse,
+  UpdateNoteRequest,
+  UpdateNoteStatusRequest,
+} from './notes.api-models';
 import { Note, NoteStatus, SaveNoteFormValue, UpdateNoteFormValue } from './note.models';
 
 export function toNote(response: NoteResponse): Note {
@@ -27,6 +32,10 @@ export function toUpdateNoteRequest(value: UpdateNoteFormValue): UpdateNoteReque
     ...toCreateNoteRequest(value),
     status: toApiNoteStatus(value.status),
   };
+}
+
+export function toUpdateNoteStatusRequest(status: NoteStatus): UpdateNoteStatusRequest {
+  return { status: toApiNoteStatus(status) };
 }
 
 function toNoteStatus(status: string): NoteStatus {

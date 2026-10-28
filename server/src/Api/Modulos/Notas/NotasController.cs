@@ -20,6 +20,8 @@ public sealed record AtualizarNotaRequest(
     IReadOnlyCollection<Guid>? CategoriaIds
 );
 
+public sealed record AtualizarStatusNotaRequest(string? Status);
+
 [ApiController]
 [Route("notas")]
 public sealed class NotasController(IMediator mediator) : ControllerBase
@@ -71,6 +73,17 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
             request.CategoriaIds);
 
         var result = await mediator.Send(command, ct);
+
+        return Responder(result);
+    }
+
+    [HttpPatch("{id:guid}/status")]
+    public async Task<IActionResult> AtualizarStatus(
+        Guid id,
+        AtualizarStatusNotaRequest request,
+        CancellationToken ct)
+    {
+        var result = await mediator.Send(new AtualizarStatusNotaCommand(UserId(), id, request.Status), ct);
 
         return Responder(result);
     }

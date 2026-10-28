@@ -7,6 +7,7 @@ public interface IRepositorioNota
         IReadOnlyCollection<Guid>? categoriaIds,
         CancellationToken cancellationToken
     );
+    Task SalvarStatusAsync(Nota nota, CancellationToken cancellationToken);
     Task ExcluirAsync(Nota nota, CancellationToken cancellationToken);
     Task<IReadOnlyList<Nota>> ListarAsync(
         Guid usuarioId,

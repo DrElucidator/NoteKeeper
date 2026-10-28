@@ -62,4 +62,10 @@ public sealed class Nota
         Status = status;
         AtualizadoEm = DateTimeOffset.UtcNow;
     }
+
+    public void AlterarStatus(StatusNota status)
+    {
+        Status = status;
+        AtualizadoEm = DateTimeOffset.UtcNow;
+    }
 }

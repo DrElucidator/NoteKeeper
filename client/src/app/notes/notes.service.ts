@@ -4,7 +4,12 @@ import { Observable, map } from 'rxjs';
 
 import { API_BASE_URL } from '../auth/auth.tokens';
 import { NoteResponse } from './notes.api-models';
-import { toCreateNoteRequest, toNote, toUpdateNoteRequest } from './notes.mappers';
+import {
+  toCreateNoteRequest,
+  toNote,
+  toUpdateNoteRequest,
+  toUpdateNoteStatusRequest,
+} from './notes.mappers';
 import { Note, SaveNoteFormValue, UpdateNoteFormValue } from './note.models';
 
 @Injectable({ providedIn: 'root' })
@@ -37,6 +42,12 @@ export class NotesService {
   update(id: string, value: UpdateNoteFormValue): Observable<Note> {
     return this.http
       .put<NoteResponse>(`${this.apiBaseUrl}/notas/${id}`, toUpdateNoteRequest(value))
+      .pipe(map(toNote));
+  }
+
+  updateStatus(id: string, status: Note['status']): Observable<Note> {
+    return this.http
+      .patch<NoteResponse>(`${this.apiBaseUrl}/notas/${id}/status`, toUpdateNoteStatusRequest(status))
       .pipe(map(toNote));
   }
 
