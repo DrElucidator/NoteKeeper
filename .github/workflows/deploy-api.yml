@@ -25,6 +25,21 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22.x'
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: client
+
+      - name: Build client
+        run: npm run build
+        working-directory: client
+
       - name: Restore dependencies
         run: dotnet restore NoteKeeper.slnx
         working-directory: server
@@ -70,6 +85,11 @@ jobs:
           --no-build
           --output "${{ runner.temp }}/notekeeper-api"
         working-directory: server
+
+      - name: Add client to API package
+        run: |
+          mkdir -p "${{ runner.temp }}/notekeeper-api/wwwroot"
+          cp -r client/dist/client/browser/. "${{ runner.temp }}/notekeeper-api/wwwroot"
 
       - name: Deploy API to Azure App Service
         uses: azure/webapps-deploy@v3

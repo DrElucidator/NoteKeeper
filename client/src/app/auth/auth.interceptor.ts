@@ -29,8 +29,8 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
 };
 
 function isProtectedApiRequest(requestUrl: string, apiBaseUrl: string): boolean {
-  const apiUrl = new URL(apiBaseUrl);
-  const url = new URL(requestUrl, apiBaseUrl);
+  const apiUrl = new URL(apiBaseUrl || '/', window.location.origin);
+  const url = new URL(requestUrl, apiUrl);
 
   if (url.origin !== apiUrl.origin) {
     return false;

@@ -117,10 +117,13 @@ app.UseExceptionHandler(error => error.Run(async context =>
 
 app.UseStatusCodePages();
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
 app.UseCors("Client");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+app.MapFallbackToFile("index.html").AllowAnonymous();
 app.Run();
 
 public partial class Program;
