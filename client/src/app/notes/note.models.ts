@@ -1,6 +1,6 @@
 import { Category } from '../categories/category.models';
 
-export type NoteStatus = 'Pending' | 'InProgress' | 'Completed' | 'Archived';
+export type NoteStatus = 'Pending' | 'InProgress' | 'Paused' | 'Completed' | 'Archived';
 export type NotePriority = 'Low' | 'Medium' | 'High' | 'Urgent';
 
 export interface Note {

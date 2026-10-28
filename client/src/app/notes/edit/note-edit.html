@@ -150,6 +150,27 @@
           <button
             type="button"
             class="flex items-start gap-3 rounded-xl border p-4 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+            [class.border-indigo-700]="model().status === 'Paused'"
+            [class.bg-indigo-50]="model().status === 'Paused'"
+            [class.border-slate-200]="model().status !== 'Paused'"
+            [attr.aria-pressed]="model().status === 'Paused'"
+            (click)="setStatus('Paused')"
+          >
+            <svg
+              lucideCirclePause
+              class="mt-0.5 size-5 shrink-0 text-violet-700"
+              aria-hidden="true"
+            ></svg>
+            <span
+              ><span class="block text-sm font-semibold text-slate-950">Paused</span
+              ><span class="mt-1 block text-sm leading-5 text-slate-600"
+                >Keep it visible while work is intentionally on hold.</span
+              ></span
+            >
+          </button>
+          <button
+            type="button"
+            class="flex items-start gap-3 rounded-xl border p-4 text-left transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
             [class.border-indigo-700]="model().status === 'InProgress'"
             [class.bg-indigo-50]="model().status === 'InProgress'"
             [class.border-slate-200]="model().status !== 'InProgress'"

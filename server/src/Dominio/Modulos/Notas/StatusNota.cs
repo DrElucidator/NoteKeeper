@@ -4,6 +4,7 @@ public enum StatusNota
 {
     Pendente,
     EmAndamento,
+    Pausada,
     Concluida,
     Arquivada
 }

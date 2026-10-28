@@ -184,6 +184,7 @@ public sealed class NotaHandlerTests
     [Theory]
     [InlineData("Pendente")]
     [InlineData("EmAndamento")]
+    [InlineData("Pausada")]
     [InlineData("Concluida")]
     [InlineData("Arquivada")]
     public async Task AtualizarNota_ComStatusValido_SalvaAlteracao(string status)
@@ -248,8 +249,10 @@ public sealed class NotaHandlerTests
             Times.Never);
     }
 
-    [Fact]
-    public async Task AtualizarStatusNota_AlteraSomenteOStatusDaNota()
+    [Theory]
+    [InlineData("EmAndamento")]
+    [InlineData("Pausada")]
+    public async Task AtualizarStatusNota_AlteraSomenteOStatusDaNota(string status)
     {
         // Arrange
         var usuarioId = Guid.NewGuid();
@@ -265,12 +268,12 @@ public sealed class NotaHandlerTests
 
         // Act
         var result = await handler.Handle(
-            new AtualizarStatusNotaCommand(usuarioId, nota.Id, "EmAndamento"),
+            new AtualizarStatusNotaCommand(usuarioId, nota.Id, status),
             CancellationToken.None);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal("EmAndamento", result.Value.Status);
+        Assert.Equal(status, result.Value.Status);
         Assert.Equal("Lembrete", result.Value.Titulo);
         Assert.Equal("Manter a descrição", result.Value.Descricao);
         repositorio.Verify(

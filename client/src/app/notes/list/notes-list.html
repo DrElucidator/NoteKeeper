@@ -15,12 +15,35 @@
         </p>
       </div>
     </div>
-    <a
-      routerLink="/workspace/notes/new"
-      class="inline-flex items-center gap-2 rounded-xl bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
-    >
-      New note
-    </a>
+    <div class="flex flex-wrap items-center gap-3">
+      <nav
+        class="inline-flex rounded-xl border border-slate-200 bg-slate-100 p-1"
+        aria-label="Notes view"
+      >
+        <a
+          routerLink="/workspace/notes"
+          aria-current="page"
+          class="inline-flex items-center gap-2 rounded-lg bg-white px-3 py-2 text-sm font-semibold text-indigo-800 shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+        >
+          <svg lucideLayoutList class="size-4" aria-hidden="true"></svg>
+          List
+        </a>
+        <a
+          routerLink="/workspace/notes/board"
+          class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+        >
+          <svg lucideColumns3 class="size-4" aria-hidden="true"></svg>
+          Board
+        </a>
+      </nav>
+      <a
+        routerLink="/workspace/notes/new"
+        class="inline-flex items-center gap-2 rounded-xl bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+      >
+        New note
+        <svg lucidePlus class="size-4" aria-hidden="true"></svg>
+      </a>
+    </div>
   </div>
 
   @if (successMessage()) {
@@ -186,7 +209,7 @@
               [attr.aria-pressed]="isStatusSelected(status)"
               (click)="toggleStatus(status)"
             >
-              {{ status === 'InProgress' ? 'In progress' : status }}
+              {{ status === 'InProgress' ? 'In progress' : status === 'Paused' ? 'Paused' : status }}
             </button>
           }
         </div>
@@ -328,6 +351,9 @@
                   [class.border-amber-200]="note.status === 'InProgress'"
                   [class.bg-amber-50]="note.status === 'InProgress'"
                   [class.text-amber-800]="note.status === 'InProgress'"
+                  [class.border-violet-200]="note.status === 'Paused'"
+                  [class.bg-violet-50]="note.status === 'Paused'"
+                  [class.text-violet-800]="note.status === 'Paused'"
                   [class.border-emerald-200]="note.status === 'Completed'"
                   [class.bg-emerald-50]="note.status === 'Completed'"
                   [class.text-emerald-800]="note.status === 'Completed'"
@@ -340,10 +366,11 @@
                   (click)="toggleStatusMenu(note.id)"
                 >
                   @switch (note.status) {
-                    @case ('Pending') { Pending }
-                    @case ('InProgress') { In progress }
-                    @case ('Completed') { Completed }
-                    @case ('Archived') { Archived }
+                    @case ('Pending') { <svg lucideListTodo class="size-3.5" aria-hidden="true"></svg> Pending }
+                    @case ('InProgress') { <svg lucideLoaderCircle class="size-3.5" aria-hidden="true"></svg> In progress }
+                    @case ('Paused') { <svg lucideCirclePause class="size-3.5" aria-hidden="true"></svg> Paused }
+                    @case ('Completed') { <svg lucideCircleCheckBig class="size-3.5" aria-hidden="true"></svg> Completed }
+                    @case ('Archived') { <svg lucideArchive class="size-3.5" aria-hidden="true"></svg> Archived }
                   }
                   <svg lucideChevronDown class="size-3" aria-hidden="true"></svg>
                 </button>
@@ -360,6 +387,7 @@
                       role="menuitem"
                       (click)="changeStatus(note, 'Pending')"
                     >
+                      <svg lucideListTodo class="size-4" aria-hidden="true"></svg>
                       Pending
                     </button>
                     <button
@@ -368,7 +396,17 @@
                       role="menuitem"
                       (click)="changeStatus(note, 'InProgress')"
                     >
+                      <svg lucideLoaderCircle class="size-4" aria-hidden="true"></svg>
                       In progress
+                    </button>
+                    <button
+                      type="button"
+                      class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-violet-800 transition hover:bg-violet-50 focus-visible:bg-violet-50 focus-visible:outline-none"
+                      role="menuitem"
+                      (click)="changeStatus(note, 'Paused')"
+                    >
+                      <svg lucideCirclePause class="size-4" aria-hidden="true"></svg>
+                      Paused
                     </button>
                     <button
                       type="button"
@@ -376,6 +414,7 @@
                       role="menuitem"
                       (click)="changeStatus(note, 'Completed')"
                     >
+                      <svg lucideCircleCheckBig class="size-4" aria-hidden="true"></svg>
                       Completed
                     </button>
                     <button
@@ -384,6 +423,7 @@
                       role="menuitem"
                       (click)="changeStatus(note, 'Archived')"
                     >
+                      <svg lucideArchive class="size-4" aria-hidden="true"></svg>
                       Archived
                     </button>
                   </div>

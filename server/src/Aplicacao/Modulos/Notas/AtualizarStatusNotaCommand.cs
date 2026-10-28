@@ -25,7 +25,7 @@ public sealed class AtualizarStatusNotaCommandHandler(IRepositorioNota repositor
             return Result.Fail<NotaDto>(
                 Erros.Criar(
                     TipoErro.Validacao,
-                    "Status deve ser Pendente, EmAndamento, Concluida ou Arquivada.",
+                    "Status deve ser Pendente, EmAndamento, Pausada, Concluida ou Arquivada.",
                     "status"));
         }
 

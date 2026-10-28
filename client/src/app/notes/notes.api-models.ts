@@ -18,7 +18,7 @@ export interface CreateNoteRequest {
 }
 
 export interface UpdateNoteRequest extends CreateNoteRequest {
-  status: 'Pendente' | 'EmAndamento' | 'Concluida' | 'Arquivada';
+  status: 'Pendente' | 'EmAndamento' | 'Pausada' | 'Concluida' | 'Arquivada';
   prioridade: 'Baixa' | 'Media' | 'Alta' | 'Urgente';
 }
 

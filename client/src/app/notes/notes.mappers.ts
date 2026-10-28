@@ -57,6 +57,8 @@ function toNoteStatus(status: string): NoteStatus {
       return 'Pending';
     case 'EmAndamento':
       return 'InProgress';
+    case 'Pausada':
+      return 'Paused';
     case 'Concluida':
       return 'Completed';
     case 'Arquivada':
@@ -72,6 +74,8 @@ function toApiNoteStatus(status: NoteStatus): UpdateNoteRequest['status'] {
       return 'Pendente';
     case 'InProgress':
       return 'EmAndamento';
+    case 'Paused':
+      return 'Pausada';
     case 'Completed':
       return 'Concluida';
     case 'Archived':
