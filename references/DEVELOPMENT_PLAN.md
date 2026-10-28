@@ -27,23 +27,21 @@ it, its implemented technologies, screenshots, and the public API integration.
 
 ```text
 src/app/
-  core/
-    api/            HTTP configuration and ProblemDetails handling
-    auth/           session state, token storage, interceptor, guard
-    models/         request and response DTOs
+  auth/             session state, token storage, interceptor, guard, DTOs
+  categories/       category service, list, create, and edit screens
+  notes/            note service, list, create, and edit screens
+  workspace/        protected shell and workspace home
+  home/             public landing page
+  public/           public presentation components
   shared/
     ui/             reusable presentational components
-  features/
-    auth/           register and sign-in pages
-    categories/     category list and form
-    notes/          note list, filters, and form
-  app.routes.ts
+  app.config.ts     routes, providers, and application configuration
 ```
 
 Rules:
 
 - Components present data and delegate API work to services.
-- Feature services are the only feature layer that calls HTTP endpoints.
+- Auth, category, and note services are the only feature layer that calls HTTP endpoints.
 - API route names remain unchanged because they are server contracts.
 - The authenticated user comes from the JWT and `/auth/me`; `userId` is not
   submitted by the client.
@@ -55,8 +53,8 @@ Rules:
 
 1. Create the Angular application.
 2. Configure Tailwind CSS, Lucide Angular, global styles, and the API base URL.
-3. Add routing and the initial public and protected layouts.
-4. Create shared DTOs and centralized ProblemDetails parsing.
+3. Add routing in `app.config.ts` and create the public and protected layouts.
+4. Create feature DTOs and show API validation or conflict feedback near the relevant fields.
 
 **Checkpoint:** the application builds, has a consistent visual foundation, and
 can reach the configured API URL.
@@ -94,15 +92,15 @@ the backend contract.
 
 ### Phase 5: Quality and delivery
 
-1. Review responsive behavior, keyboard navigation, labels, and empty states.
-2. Add appropriate unit tests for services, guards, and form validation.
-3. Add end-to-end coverage for register, sign in, category management, and note
-   filtering.
-4. Prepare the final portfolio README, screenshots, run instructions, and Azure
-   deployment configuration.
+1. Review responsive behavior, labels, empty states, loading states, validation, and confirmation feedback.
+2. Prepare the final portfolio README, planning references, animated demonstration, and local run instructions.
+3. Deploy the Angular client and .NET API together through GitHub Actions, Azure App Service, and Azure SQL Database.
 
-**Checkpoint:** the frontend is demonstrable, documented, and ready for public
-portfolio use.
+**Checkpoint:** the full application is demonstrable, documented, deployed, and ready for public portfolio use.
+
+## Optional future improvements
+
+Client unit and end-to-end tests are valuable for future maintenance, but they are not a requirement of the academic specification or the current delivery scope.
 
 ## API contract reminders
 
