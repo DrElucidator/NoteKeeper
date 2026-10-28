@@ -7,6 +7,7 @@ import {
   LucideAlertTriangle,
   LucideChevronDown,
   LucideFileText,
+  LucideFlag,
   LucideFilter,
   LucidePencil,
   LucideRefreshCw,
@@ -19,7 +20,7 @@ import {
 import { CategoriesService } from '../../categories/categories.service';
 import { Category } from '../../categories/category.models';
 import { ProblemDetails } from '../../shared/models/problem-details.model';
-import { Note, NoteStatus } from '../note.models';
+import { Note, NotePriority, NoteStatus } from '../note.models';
 import { NotesService } from '../notes.service';
 
 @Component({
@@ -29,6 +30,7 @@ import { NotesService } from '../notes.service';
     LucideAlertTriangle,
     LucideChevronDown,
     LucideFileText,
+    LucideFlag,
     LucideFilter,
     LucidePencil,
     LucideRefreshCw,
@@ -50,10 +52,12 @@ export class NotesList {
   protected readonly errorMessage = signal('');
   protected readonly isDeleting = signal(false);
   protected readonly isLoading = signal(true);
+  protected readonly isUpdatingPriorityId = signal<string | null>(null);
   protected readonly isUpdatingStatusId = signal<string | null>(null);
   protected readonly notes = signal<Note[]>([]);
   protected readonly notePendingDeletion = signal<Note | null>(null);
   protected readonly searchQuery = signal('');
+  protected readonly priorityMenuNoteId = signal<string | null>(null);
   protected readonly selectedCategoryIds = signal<string[]>([]);
   protected readonly successMessage = signal('');
   protected readonly statusMenuNoteId = signal<string | null>(null);
@@ -138,8 +142,42 @@ export class NotesList {
     });
   }
 
+  protected changePriority(note: Note, priority: NotePriority): void {
+    if (note.priority === priority || this.isUpdatingPriorityId()) {
+      this.priorityMenuNoteId.set(null);
+      return;
+    }
+
+    this.isUpdatingPriorityId.set(note.id);
+    this.priorityMenuNoteId.set(null);
+    this.statusError.set('');
+    this.successMessage.set('');
+
+    this.notesService.updatePriority(note.id, priority).subscribe({
+      next: (updatedNote) => {
+        this.notes.update((notes) =>
+          notes.map((currentNote) => (currentNote.id === updatedNote.id ? updatedNote : currentNote)),
+        );
+        this.successMessage.set(`Priority for "${updatedNote.title}" was updated.`);
+        this.isUpdatingPriorityId.set(null);
+      },
+      error: (response: HttpErrorResponse) => {
+        const problem = response.error as ProblemDetails | null;
+
+        this.statusError.set(problem?.detail ?? 'We could not update the note priority. Try again.');
+        this.isUpdatingPriorityId.set(null);
+      },
+    });
+  }
+
   protected toggleStatusMenu(noteId: string): void {
     this.statusMenuNoteId.update((currentNoteId) =>
+      currentNoteId === noteId ? null : noteId,
+    );
+  }
+
+  protected togglePriorityMenu(noteId: string): void {
+    this.priorityMenuNoteId.update((currentNoteId) =>
       currentNoteId === noteId ? null : noteId,
     );
   }

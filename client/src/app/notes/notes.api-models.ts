@@ -5,6 +5,7 @@ export interface NoteResponse {
   titulo: string;
   descricao: string | null;
   status: string;
+  prioridade: string;
   categorias: CategoryResponse[];
   criadoEm: string;
   atualizadoEm: string;
@@ -18,8 +19,13 @@ export interface CreateNoteRequest {
 
 export interface UpdateNoteRequest extends CreateNoteRequest {
   status: 'Pendente' | 'EmAndamento' | 'Concluida' | 'Arquivada';
+  prioridade: 'Baixa' | 'Media' | 'Alta' | 'Urgente';
 }
 
 export interface UpdateNoteStatusRequest {
   status: UpdateNoteRequest['status'];
+}
+
+export interface UpdateNotePriorityRequest {
+  prioridade: UpdateNoteRequest['prioridade'];
 }

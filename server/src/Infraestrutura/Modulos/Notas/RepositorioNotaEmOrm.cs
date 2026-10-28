@@ -51,6 +51,11 @@ public sealed class RepositorioNotaEmOrm(NoteKeeperDbContext db) : IRepositorioN
         return db.SaveChangesAsync(ct);
     }
 
+    public Task SalvarPrioridadeAsync(Nota nota, CancellationToken ct)
+    {
+        return db.SaveChangesAsync(ct);
+    }
+
     public async Task<IReadOnlyList<Nota>> ListarAsync(
         Guid usuarioId,
         IReadOnlyCollection<Guid>? categoriaIds,

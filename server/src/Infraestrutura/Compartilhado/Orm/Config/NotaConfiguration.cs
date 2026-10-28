@@ -26,6 +26,11 @@ public sealed class NotaConfiguration : IEntityTypeConfiguration<Nota>
             .HasMaxLength(20)
             .IsRequired();
 
+        builder.Property(nota => nota.Prioridade)
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .IsRequired();
+
         builder.HasIndex(nota => new { nota.UsuarioId, nota.TituloNormalizado })
             .IsUnique();
 

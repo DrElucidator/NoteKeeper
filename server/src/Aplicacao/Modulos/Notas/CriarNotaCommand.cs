@@ -21,7 +21,8 @@ public sealed class CriarNotaCommandHandler(IRepositorioNota repositorio)
             command.UsuarioId,
             command.Titulo ?? string.Empty,
             command.Descricao,
-            StatusNota.Pendente);
+            StatusNota.Pendente,
+            PrioridadeNota.Media);
         var erros = nota.Validar();
 
         if (erros.Count > 0)

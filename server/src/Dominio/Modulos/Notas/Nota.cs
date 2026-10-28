@@ -15,6 +15,7 @@ public sealed class Nota
 
     public string? Descricao { get; private set; }
     public StatusNota Status { get; private set; }
+    public PrioridadeNota Prioridade { get; private set; }
 
     public DateTimeOffset CriadoEm { get; private set; }
     public DateTimeOffset AtualizadoEm { get; private set; }
@@ -23,12 +24,17 @@ public sealed class Nota
 
     private Nota() { }
 
-    public Nota(Guid usuarioId, string titulo, string? descricao, StatusNota status)
+    public Nota(
+        Guid usuarioId,
+        string titulo,
+        string? descricao,
+        StatusNota status,
+        PrioridadeNota prioridade = PrioridadeNota.Media)
     {
         Id = Guid.CreateVersion7();
         UsuarioId = usuarioId;
         CriadoEm = DateTimeOffset.UtcNow;
-        Atualizar(titulo, descricao, status);
+        Atualizar(titulo, descricao, status, prioridade);
     }
 
     public IReadOnlyList<ErroValidacao> Validar()
@@ -50,22 +56,38 @@ public sealed class Nota
             erros.Add(new("status", "Status inválido."));
         }
 
+        if (!Enum.IsDefined(Prioridade))
+        {
+            erros.Add(new("prioridade", "Prioridade inválida."));
+        }
+
         return erros;
     }
 
-    public void Atualizar(string titulo, string? descricao, StatusNota status)
+    public void Atualizar(
+        string titulo,
+        string? descricao,
+        StatusNota status,
+        PrioridadeNota prioridade)
     {
         Titulo = titulo?.Trim() ?? string.Empty;
         TituloNormalizado = Titulo.ToUpperInvariant();
         Descricao = string.IsNullOrWhiteSpace(descricao) ? null : descricao.Trim();
 
         Status = status;
+        Prioridade = prioridade;
         AtualizadoEm = DateTimeOffset.UtcNow;
     }
 
     public void AlterarStatus(StatusNota status)
     {
         Status = status;
+        AtualizadoEm = DateTimeOffset.UtcNow;
+    }
+
+    public void AlterarPrioridade(PrioridadeNota prioridade)
+    {
+        Prioridade = prioridade;
         AtualizadoEm = DateTimeOffset.UtcNow;
     }
 }

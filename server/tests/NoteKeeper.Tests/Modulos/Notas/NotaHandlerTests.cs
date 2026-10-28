@@ -34,7 +34,9 @@ public sealed class NotaHandlerTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.Equal("Pendente", result.Value.Status);
+        Assert.Equal("Media", result.Value.Prioridade);
         Assert.Equal(StatusNota.Pendente, notaSalva?.Status);
+        Assert.Equal(PrioridadeNota.Media, notaSalva?.Prioridade);
     }
 
     [Fact]
@@ -169,7 +171,7 @@ public sealed class NotaHandlerTests
 
         // Act
         var result = await handler.Handle(
-            new AtualizarNotaCommand(usuarioId, nota.Id, "Lembrete", null, null, []),
+            new AtualizarNotaCommand(usuarioId, nota.Id, "Lembrete", null, null, [], "Media"),
             CancellationToken.None);
 
         // Assert
@@ -206,7 +208,7 @@ public sealed class NotaHandlerTests
 
         // Act
         var result = await handler.Handle(
-            new AtualizarNotaCommand(usuarioId, nota.Id, "Lembrete", null, status, []),
+            new AtualizarNotaCommand(usuarioId, nota.Id, "Lembrete", null, status, [], "Media"),
             CancellationToken.None);
 
         // Assert
@@ -229,7 +231,14 @@ public sealed class NotaHandlerTests
 
         // Act
         var result = await handler.Handle(
-            new AtualizarNotaCommand(Guid.NewGuid(), Guid.NewGuid(), "Lembrete", null, "Pendente", []),
+            new AtualizarNotaCommand(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Lembrete",
+                null,
+                "Pendente",
+                [],
+                "Media"),
             CancellationToken.None);
 
         // Assert
@@ -266,6 +275,39 @@ public sealed class NotaHandlerTests
         Assert.Equal("Manter a descrição", result.Value.Descricao);
         repositorio.Verify(
             x => x.SalvarStatusAsync(nota, It.IsAny<CancellationToken>()),
+            Times.Once);
+        repositorio.Verify(
+            x => x.SalvarAsync(It.IsAny<Nota>(), It.IsAny<IReadOnlyCollection<Guid>?>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task AtualizarPrioridadeNota_AlteraSomenteAPrioridadeDaNota()
+    {
+        // Arrange
+        var usuarioId = Guid.NewGuid();
+        var nota = new Nota(usuarioId, "Lembrete", "Manter a descrição", StatusNota.Pendente);
+        var repositorio = new Mock<IRepositorioNota>();
+        repositorio
+            .Setup(x => x.ObterAsync(nota.Id, usuarioId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(nota);
+        repositorio
+            .Setup(x => x.SalvarPrioridadeAsync(nota, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var handler = new AtualizarPrioridadeNotaCommandHandler(repositorio.Object);
+
+        // Act
+        var result = await handler.Handle(
+            new AtualizarPrioridadeNotaCommand(usuarioId, nota.Id, "Urgente"),
+            CancellationToken.None);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal("Urgente", result.Value.Prioridade);
+        Assert.Equal("Pendente", result.Value.Status);
+        Assert.Equal("Lembrete", result.Value.Titulo);
+        repositorio.Verify(
+            x => x.SalvarPrioridadeAsync(nota, It.IsAny<CancellationToken>()),
             Times.Once);
         repositorio.Verify(
             x => x.SalvarAsync(It.IsAny<Nota>(), It.IsAny<IReadOnlyCollection<Guid>?>(), It.IsAny<CancellationToken>()),

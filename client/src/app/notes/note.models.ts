@@ -1,12 +1,14 @@
 import { Category } from '../categories/category.models';
 
 export type NoteStatus = 'Pending' | 'InProgress' | 'Completed' | 'Archived';
+export type NotePriority = 'Low' | 'Medium' | 'High' | 'Urgent';
 
 export interface Note {
   id: string;
   title: string;
   description: string | null;
   status: NoteStatus;
+  priority: NotePriority;
   categories: Category[];
   createdAt: string;
   updatedAt: string;
@@ -20,4 +22,5 @@ export interface SaveNoteFormValue {
 
 export interface UpdateNoteFormValue extends SaveNoteFormValue {
   status: NoteStatus;
+  priority: NotePriority;
 }

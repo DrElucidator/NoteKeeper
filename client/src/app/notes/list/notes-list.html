@@ -168,7 +168,11 @@
     <div class="mt-8 grid gap-4 md:grid-cols-2">
       @for (note of visibleNotes(); track note.id) {
         <article
-          class="flex min-h-48 flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+          class="flex min-h-48 flex-col rounded-2xl border border-slate-200 border-l-4 bg-white p-5 shadow-sm"
+          [class.border-l-slate-300]="note.priority === 'Low'"
+          [class.border-l-indigo-500]="note.priority === 'Medium'"
+          [class.border-l-amber-500]="note.priority === 'High'"
+          [class.border-l-rose-500]="note.priority === 'Urgent'"
         >
           <div class="flex items-start justify-between gap-4">
             <h2 class="break-words text-lg font-semibold text-slate-950">{{ note.title }}</h2>
@@ -267,6 +271,82 @@
           } @else {
             <p class="mt-3 text-sm italic leading-6 text-slate-400">No description</p>
           }
+
+          <div class="mt-5 flex items-center gap-2">
+            <svg lucideFlag class="size-4 text-slate-500" aria-hidden="true"></svg>
+            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Priority</span>
+            <div class="relative inline-flex">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold outline-none transition focus-visible:ring-3 disabled:cursor-wait disabled:opacity-70"
+                [class.border-slate-200]="note.priority === 'Low'"
+                [class.bg-slate-100]="note.priority === 'Low'"
+                [class.text-slate-600]="note.priority === 'Low'"
+                [class.border-indigo-200]="note.priority === 'Medium'"
+                [class.bg-indigo-50]="note.priority === 'Medium'"
+                [class.text-indigo-700]="note.priority === 'Medium'"
+                [class.border-amber-200]="note.priority === 'High'"
+                [class.bg-amber-50]="note.priority === 'High'"
+                [class.text-amber-800]="note.priority === 'High'"
+                [class.border-rose-200]="note.priority === 'Urgent'"
+                [class.bg-rose-50]="note.priority === 'Urgent'"
+                [class.text-rose-700]="note.priority === 'Urgent'"
+                [disabled]="isUpdatingPriorityId() === note.id"
+                [attr.aria-expanded]="priorityMenuNoteId() === note.id"
+                [attr.aria-label]="'Change priority for ' + note.title"
+                (click)="togglePriorityMenu(note.id)"
+              >
+                @switch (note.priority) {
+                  @case ('Low') { Low }
+                  @case ('Medium') { Medium }
+                  @case ('High') { High }
+                  @case ('Urgent') { Urgent }
+                }
+                <svg lucideChevronDown class="size-3" aria-hidden="true"></svg>
+              </button>
+
+              @if (priorityMenuNoteId() === note.id) {
+                <div
+                  class="absolute left-0 top-full z-30 mt-2 w-32 overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-950/10"
+                  role="menu"
+                  aria-label="Select note priority"
+                >
+                  <button
+                    type="button"
+                    class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 focus-visible:bg-slate-100 focus-visible:outline-none"
+                    role="menuitem"
+                    (click)="changePriority(note, 'Low')"
+                  >
+                    Low
+                  </button>
+                  <button
+                    type="button"
+                    class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-indigo-700 transition hover:bg-indigo-50 focus-visible:bg-indigo-50 focus-visible:outline-none"
+                    role="menuitem"
+                    (click)="changePriority(note, 'Medium')"
+                  >
+                    Medium
+                  </button>
+                  <button
+                    type="button"
+                    class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-amber-800 transition hover:bg-amber-50 focus-visible:bg-amber-50 focus-visible:outline-none"
+                    role="menuitem"
+                    (click)="changePriority(note, 'High')"
+                  >
+                    High
+                  </button>
+                  <button
+                    type="button"
+                    class="flex w-full items-center rounded-lg px-3 py-2 text-left text-sm font-medium text-rose-700 transition hover:bg-rose-50 focus-visible:bg-rose-50 focus-visible:outline-none"
+                    role="menuitem"
+                    (click)="changePriority(note, 'Urgent')"
+                  >
+                    Urgent
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
 
           @if (note.categories.length > 0) {
             <div class="mt-5 flex flex-wrap gap-2">

@@ -7,6 +7,7 @@ public sealed record NotaDto(
     string Titulo,
     string? Descricao,
     string Status,
+    string Prioridade,
     IReadOnlyList<CategoriaDto> Categorias,
     DateTimeOffset CriadoEm,
     DateTimeOffset AtualizadoEm

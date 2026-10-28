@@ -8,6 +8,7 @@ import {
   toCreateNoteRequest,
   toNote,
   toUpdateNoteRequest,
+  toUpdateNotePriorityRequest,
   toUpdateNoteStatusRequest,
 } from './notes.mappers';
 import { Note, SaveNoteFormValue, UpdateNoteFormValue } from './note.models';
@@ -48,6 +49,15 @@ export class NotesService {
   updateStatus(id: string, status: Note['status']): Observable<Note> {
     return this.http
       .patch<NoteResponse>(`${this.apiBaseUrl}/notas/${id}/status`, toUpdateNoteStatusRequest(status))
+      .pipe(map(toNote));
+  }
+
+  updatePriority(id: string, priority: Note['priority']): Observable<Note> {
+    return this.http
+      .patch<NoteResponse>(
+        `${this.apiBaseUrl}/notas/${id}/prioridade`,
+        toUpdateNotePriorityRequest(priority),
+      )
       .pipe(map(toNote));
   }
 

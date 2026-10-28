@@ -17,10 +17,12 @@ public sealed record AtualizarNotaRequest(
     string? Titulo,
     string? Descricao,
     string? Status,
-    IReadOnlyCollection<Guid>? CategoriaIds
+    IReadOnlyCollection<Guid>? CategoriaIds,
+    string? Prioridade
 );
 
 public sealed record AtualizarStatusNotaRequest(string? Status);
+public sealed record AtualizarPrioridadeNotaRequest(string? Prioridade);
 
 [ApiController]
 [Route("notas")]
@@ -70,7 +72,8 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
             request.Titulo,
             request.Descricao,
             request.Status,
-            request.CategoriaIds);
+            request.CategoriaIds,
+            request.Prioridade);
 
         var result = await mediator.Send(command, ct);
 
@@ -84,6 +87,19 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
         CancellationToken ct)
     {
         var result = await mediator.Send(new AtualizarStatusNotaCommand(UserId(), id, request.Status), ct);
+
+        return Responder(result);
+    }
+
+    [HttpPatch("{id:guid}/prioridade")]
+    public async Task<IActionResult> AtualizarPrioridade(
+        Guid id,
+        AtualizarPrioridadeNotaRequest request,
+        CancellationToken ct)
+    {
+        var result = await mediator.Send(
+            new AtualizarPrioridadeNotaCommand(UserId(), id, request.Prioridade),
+            ct);
 
         return Responder(result);
     }

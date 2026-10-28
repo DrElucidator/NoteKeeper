@@ -64,6 +64,7 @@ export class NoteEdit {
     description: '',
     categoryIds: [],
     status: 'Pending',
+    priority: 'Medium',
   });
   protected readonly noteForm = createNoteForm(
     this.model as unknown as WritableSignal<SaveNoteFormValue>,
@@ -131,6 +132,7 @@ export class NoteEdit {
           description: note.description ?? '',
           categoryIds: note.categories.map((category) => category.id),
           status: note.status,
+          priority: note.priority,
         });
         this.isLoadingNote.set(false);
       },
