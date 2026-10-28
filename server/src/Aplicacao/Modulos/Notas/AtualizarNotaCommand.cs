@@ -28,7 +28,10 @@ public sealed class AtualizarNotaCommandHandler(IRepositorioNota repositorio)
         if (!StatusNotaParser.TryParse(command.Status, out var status))
         {
             return Result.Fail<NotaDto>(
-                Erros.Criar(TipoErro.Validacao, "Status deve ser Ativa ou Arquivada.", "status"));
+                Erros.Criar(
+                    TipoErro.Validacao,
+                    "Status deve ser Pendente, EmAndamento, Concluida ou Arquivada.",
+                    "status"));
         }
 
         nota.Atualizar(command.Titulo ?? string.Empty, command.Descricao, status);

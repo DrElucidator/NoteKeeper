@@ -1,6 +1,6 @@
 import { Category } from '../categories/category.models';
 
-export type NoteStatus = 'Active' | 'Archived';
+export type NoteStatus = 'Pending' | 'InProgress' | 'Completed' | 'Archived';
 
 export interface Note {
   id: string;

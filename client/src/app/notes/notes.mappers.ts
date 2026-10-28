@@ -31,8 +31,12 @@ export function toUpdateNoteRequest(value: UpdateNoteFormValue): UpdateNoteReque
 
 function toNoteStatus(status: string): NoteStatus {
   switch (status) {
-    case 'Ativa':
-      return 'Active';
+    case 'Pendente':
+      return 'Pending';
+    case 'EmAndamento':
+      return 'InProgress';
+    case 'Concluida':
+      return 'Completed';
     case 'Arquivada':
       return 'Archived';
     default:
@@ -40,8 +44,17 @@ function toNoteStatus(status: string): NoteStatus {
   }
 }
 
-function toApiNoteStatus(status: NoteStatus): 'Ativa' | 'Arquivada' {
-  return status === 'Archived' ? 'Arquivada' : 'Ativa';
+function toApiNoteStatus(status: NoteStatus): UpdateNoteRequest['status'] {
+  switch (status) {
+    case 'Pending':
+      return 'Pendente';
+    case 'InProgress':
+      return 'EmAndamento';
+    case 'Completed':
+      return 'Concluida';
+    case 'Archived':
+      return 'Arquivada';
+  }
 }
 
 function toOptionalDescription(value: string): string | null {

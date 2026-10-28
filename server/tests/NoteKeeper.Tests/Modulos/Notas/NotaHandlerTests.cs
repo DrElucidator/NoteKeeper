@@ -8,7 +8,7 @@ namespace NoteKeeper.Tests.Modulos.Notas;
 public sealed class NotaHandlerTests
 {
     [Fact]
-    public async Task CriarNota_SemStatus_SalvaComoAtiva()
+    public async Task CriarNota_SemStatus_SalvaComoPendente()
     {
         // Arrange
         var usuarioId = Guid.NewGuid();
@@ -33,8 +33,8 @@ public sealed class NotaHandlerTests
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal("Ativa", result.Value.Status);
-        Assert.Equal(StatusNota.Ativa, notaSalva?.Status);
+        Assert.Equal("Pendente", result.Value.Status);
+        Assert.Equal(StatusNota.Pendente, notaSalva?.Status);
     }
 
     [Fact]
@@ -160,7 +160,7 @@ public sealed class NotaHandlerTests
     {
         // Arrange
         var usuarioId = Guid.NewGuid();
-        var nota = new Nota(usuarioId, "Lembrete", null, StatusNota.Ativa);
+        var nota = new Nota(usuarioId, "Lembrete", null, StatusNota.Pendente);
         var repositorio = new Mock<IRepositorioNota>();
         repositorio
             .Setup(x => x.ObterAsync(nota.Id, usuarioId, It.IsAny<CancellationToken>()))
@@ -179,12 +179,16 @@ public sealed class NotaHandlerTests
             Times.Never);
     }
 
-    [Fact]
-    public async Task AtualizarNota_ComStatusValido_SalvaAlteracao()
+    [Theory]
+    [InlineData("Pendente")]
+    [InlineData("EmAndamento")]
+    [InlineData("Concluida")]
+    [InlineData("Arquivada")]
+    public async Task AtualizarNota_ComStatusValido_SalvaAlteracao(string status)
     {
         // Arrange
         var usuarioId = Guid.NewGuid();
-        var nota = new Nota(usuarioId, "Lembrete", null, StatusNota.Ativa);
+        var nota = new Nota(usuarioId, "Lembrete", null, StatusNota.Pendente);
         var repositorio = new Mock<IRepositorioNota>();
         repositorio
             .Setup(x => x.ObterAsync(nota.Id, usuarioId, It.IsAny<CancellationToken>()))
@@ -202,12 +206,12 @@ public sealed class NotaHandlerTests
 
         // Act
         var result = await handler.Handle(
-            new AtualizarNotaCommand(usuarioId, nota.Id, "Lembrete", null, "Arquivada", []),
+            new AtualizarNotaCommand(usuarioId, nota.Id, "Lembrete", null, status, []),
             CancellationToken.None);
 
         // Assert
         Assert.True(result.IsSuccess);
-        Assert.Equal("Arquivada", result.Value.Status);
+        Assert.Equal(status, result.Value.Status);
         repositorio.Verify(
             x => x.SalvarAsync(nota, It.IsAny<IReadOnlyCollection<Guid>?>(), It.IsAny<CancellationToken>()),
             Times.Once);
@@ -225,7 +229,7 @@ public sealed class NotaHandlerTests
 
         // Act
         var result = await handler.Handle(
-            new AtualizarNotaCommand(Guid.NewGuid(), Guid.NewGuid(), "Lembrete", null, "Ativa", []),
+            new AtualizarNotaCommand(Guid.NewGuid(), Guid.NewGuid(), "Lembrete", null, "Pendente", []),
             CancellationToken.None);
 
         // Assert
@@ -240,7 +244,7 @@ public sealed class NotaHandlerTests
     {
         // Arrange
         var usuarioId = Guid.NewGuid();
-        var nota = new Nota(usuarioId, "Lembrete", null, StatusNota.Ativa);
+        var nota = new Nota(usuarioId, "Lembrete", null, StatusNota.Pendente);
         var repositorio = new Mock<IRepositorioNota>();
         repositorio
             .Setup(x => x.ObterAsync(nota.Id, usuarioId, It.IsAny<CancellationToken>()))

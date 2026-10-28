@@ -13,9 +13,11 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   LucideArchive,
   LucideArrowLeft,
+  LucideCircleCheckBig,
   LucideCheck,
   LucideFilePenLine,
-  LucidePencil,
+  LucideListTodo,
+  LucideLoaderCircle,
   LucideTag,
 } from '@lucide/angular';
 
@@ -31,9 +33,11 @@ import { NotesService } from '../notes.service';
     FormField,
     LucideArchive,
     LucideArrowLeft,
+    LucideCircleCheckBig,
     LucideCheck,
     LucideFilePenLine,
-    LucidePencil,
+    LucideListTodo,
+    LucideLoaderCircle,
     LucideTag,
     RouterLink,
   ],
@@ -59,7 +63,7 @@ export class NoteEdit {
     title: '',
     description: '',
     categoryIds: [],
-    status: 'Active',
+    status: 'Pending',
   });
   protected readonly noteForm = createNoteForm(
     this.model as unknown as WritableSignal<SaveNoteFormValue>,

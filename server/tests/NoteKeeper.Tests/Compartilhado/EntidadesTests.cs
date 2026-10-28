@@ -43,7 +43,7 @@ public sealed class EntidadesTests
         var usuarioId = Guid.NewGuid();
 
         // Act
-        var nota = new Nota(usuarioId, "Ideia", null, StatusNota.Ativa);
+        var nota = new Nota(usuarioId, "Ideia", null, StatusNota.Pendente);
 
         // Assert
         Assert.Empty(nota.Validar());
@@ -58,7 +58,7 @@ public sealed class EntidadesTests
         var descricao = new string('a', 301);
 
         // Act
-        var nota = new Nota(usuarioId, "Ideia", descricao, StatusNota.Ativa);
+        var nota = new Nota(usuarioId, "Ideia", descricao, StatusNota.Pendente);
 
         // Assert
         Assert.Contains(nota.Validar(), erro => erro.Campo == "descricao");

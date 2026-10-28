@@ -17,5 +17,5 @@ export interface CreateNoteRequest {
 }
 
 export interface UpdateNoteRequest extends CreateNoteRequest {
-  status: 'Ativa' | 'Arquivada';
+  status: 'Pendente' | 'EmAndamento' | 'Concluida' | 'Arquivada';
 }
