@@ -234,6 +234,41 @@ public sealed class GoogleCalendarService(
         await db.SaveChangesAsync(ct);
     }
 
+    public async Task RemoverEventoDaNotaAsync(Guid usuarioId, Guid notaId, CancellationToken ct)
+    {
+        var connection = await db.GoogleCalendarConnections
+            .SingleOrDefaultAsync(item => item.UsuarioId == usuarioId, ct);
+
+        if (connection is null)
+        {
+            return;
+        }
+
+        var note = await db.Notas
+            .SingleOrDefaultAsync(item => item.Id == notaId && item.UsuarioId == usuarioId, ct);
+
+        if (note is null || string.IsNullOrWhiteSpace(note.GoogleCalendarEventId))
+        {
+            return;
+        }
+
+        var accessToken = await ObterAccessTokenAsync(connection, ct);
+        var http = httpClientFactory.CreateClient("GoogleCalendar");
+        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        var response = await http.DeleteAsync(
+            $"https://www.googleapis.com/calendar/v3/calendars/{Uri.EscapeDataString(connection.CalendarioId)}/events/{Uri.EscapeDataString(note.GoogleCalendarEventId)}",
+            ct);
+
+        if (!response.IsSuccessStatusCode && response.StatusCode != System.Net.HttpStatusCode.NotFound)
+        {
+            throw new GoogleCalendarException("Google Calendar could not remove this event. Try again.");
+        }
+
+        note.RemoverEventoGoogleCalendar();
+        await db.SaveChangesAsync(ct);
+    }
+
     private AuthorizationState ReadAuthorizationState(string state)
     {
         try

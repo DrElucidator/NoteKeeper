@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using NoteKeeper.Api.Compartilhado.Http;
 using MediatR;
 using NoteKeeper.Aplicacao.Modulos.Notas;
+using NoteKeeper.Infraestrutura.Modulos.GoogleCalendar;
 
 namespace NoteKeeper.Api.Modulos.Notas;
 
@@ -28,7 +29,9 @@ public sealed record AtualizarPrioridadeNotaRequest(string? Prioridade);
 
 [ApiController]
 [Route("notas")]
-public sealed class NotasController(IMediator mediator) : ControllerBase
+public sealed class NotasController(
+    IMediator mediator,
+    GoogleCalendarService googleCalendar) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> Listar(
@@ -90,6 +93,18 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
         AtualizarStatusNotaRequest request,
         CancellationToken ct)
     {
+        if (string.Equals(request.Status, "Arquivada", StringComparison.OrdinalIgnoreCase))
+        {
+            try
+            {
+                await googleCalendar.RemoverEventoDaNotaAsync(UserId(), id, ct);
+            }
+            catch (GoogleCalendarException exception)
+            {
+                return BadRequest(new ProblemDetails { Status = 400, Title = exception.Message });
+            }
+        }
+
         var result = await mediator.Send(new AtualizarStatusNotaCommand(UserId(), id, request.Status), ct);
 
         return Responder(result);
@@ -111,6 +126,15 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Excluir(Guid id, CancellationToken ct)
     {
+        try
+        {
+            await googleCalendar.RemoverEventoDaNotaAsync(UserId(), id, ct);
+        }
+        catch (GoogleCalendarException exception)
+        {
+            return BadRequest(new ProblemDetails { Status = 400, Title = exception.Message });
+        }
+
         var result = await mediator.Send(new ExcluirNotaCommand(UserId(), id), ct);
 
         return result.IsSuccess ? NoContent() : this.ResultProblem(result);
