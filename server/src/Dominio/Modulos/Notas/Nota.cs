@@ -15,6 +15,7 @@ public sealed class Nota
 
     public string? Descricao { get; private set; }
     public DateOnly? DataVencimento { get; private set; }
+    public string? GoogleCalendarEventId { get; private set; }
     public StatusNota Status { get; private set; }
     public PrioridadeNota Prioridade { get; private set; }
 
@@ -92,6 +93,18 @@ public sealed class Nota
     public void AlterarPrioridade(PrioridadeNota prioridade)
     {
         Prioridade = prioridade;
+        AtualizadoEm = DateTimeOffset.UtcNow;
+    }
+
+    public void DefinirEventoGoogleCalendar(string eventId)
+    {
+        GoogleCalendarEventId = eventId;
+        AtualizadoEm = DateTimeOffset.UtcNow;
+    }
+
+    public void RemoverEventoGoogleCalendar()
+    {
+        GoogleCalendarEventId = null;
         AtualizadoEm = DateTimeOffset.UtcNow;
     }
 }

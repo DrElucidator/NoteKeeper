@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +11,18 @@ using NoteKeeper.Aplicacao;
 using NoteKeeper.Dominio.Compartilhado;
 using NoteKeeper.Infraestrutura;
 using NoteKeeper.Infraestrutura.Compartilhado.Orm;
+using NoteKeeper.Infraestrutura.Modulos.GoogleCalendar;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddDataProtection().SetApplicationName("NoteKeeper");
+builder.Services
+    .AddOptions<GoogleCalendarOptions>()
+    .BindConfiguration(GoogleCalendarOptions.SectionName);
+builder.Services.AddHttpClient("GoogleCalendar");
+builder.Services.AddScoped<GoogleCalendarService>();
 builder.Services.AddScoped<IEmissorTokens, JwtTokenGenerator>();
 builder.Services
     .AddOptions<JwtOptions>()

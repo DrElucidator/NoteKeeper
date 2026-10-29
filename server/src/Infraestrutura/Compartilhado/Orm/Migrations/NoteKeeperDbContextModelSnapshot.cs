@@ -132,6 +132,10 @@ namespace NoteKeeper.Infraestrutura.Compartilhado.Orm.Migrations
                     b.Property<DateOnly?>("DataVencimento")
                         .HasColumnType("date");
 
+                    b.Property<string>("GoogleCalendarEventId")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("Prioridade")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -161,6 +165,31 @@ namespace NoteKeeper.Infraestrutura.Compartilhado.Orm.Migrations
                         .IsUnique();
 
                     b.ToTable("Notas");
+                });
+
+            modelBuilder.Entity("NoteKeeper.Infraestrutura.Modulos.GoogleCalendar.GoogleCalendarConnection", b =>
+                {
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("AtualizadoEm")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CalendarioId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset>("ConectadoEm")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("RefreshTokenProtegido")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UsuarioId");
+
+                    b.ToTable("GoogleCalendarConnections");
                 });
 
             modelBuilder.Entity("NoteKeeper.Dominio.Modulos.Notas.NotaCategoria", b =>
@@ -306,6 +335,15 @@ namespace NoteKeeper.Infraestrutura.Compartilhado.Orm.Migrations
                         .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NoteKeeper.Infraestrutura.Modulos.GoogleCalendar.GoogleCalendarConnection", b =>
+                {
+                    b.HasOne("NoteKeeper.Infraestrutura.Compartilhado.Orm.NoteKeeperUser", null)
+                        .WithOne()
+                        .HasForeignKey("NoteKeeper.Infraestrutura.Modulos.GoogleCalendar.GoogleCalendarConnection", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

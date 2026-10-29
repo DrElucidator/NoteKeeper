@@ -4,16 +4,19 @@ import { RouterLink } from '@angular/router';
 import {
   LucideAlertCircle,
   LucideCalendarDays,
+  LucideCalendarSync,
   LucideChevronLeft,
   LucideChevronRight,
   LucideColumns3,
   LucideLayoutList,
   LucidePlus,
   LucideRefreshCw,
+  LucideUnlink,
 } from '@lucide/angular';
 
 import { ProblemDetails } from '../../shared/models/problem-details.model';
 import { Note } from '../note.models';
+import { GoogleCalendarService, GoogleCalendarStatus } from '../google-calendar.service';
 import { NotesService } from '../notes.service';
 
 interface CalendarDay {
@@ -26,22 +29,28 @@ interface CalendarDay {
   imports: [
     LucideAlertCircle,
     LucideCalendarDays,
+    LucideCalendarSync,
     LucideChevronLeft,
     LucideChevronRight,
     LucideColumns3,
     LucideLayoutList,
     LucidePlus,
     LucideRefreshCw,
+    LucideUnlink,
     RouterLink,
   ],
   selector: 'app-notes-calendar',
   templateUrl: './notes-calendar.html',
 })
 export class NotesCalendar {
+  private readonly googleCalendarService = inject(GoogleCalendarService);
   private readonly notesService = inject(NotesService);
 
   protected readonly currentMonth = signal(startOfMonth(new Date()));
   protected readonly errorMessage = signal('');
+  protected readonly googleCalendarMessage = signal('');
+  protected readonly googleCalendarStatus = signal<GoogleCalendarStatus | null>(null);
+  protected readonly isGoogleCalendarAction = signal(false);
   protected readonly isLoading = signal(true);
   protected readonly notes = signal<Note[]>([]);
   protected readonly selectedDate = signal(toIsoDate(new Date()));
@@ -78,6 +87,7 @@ export class NotesCalendar {
 
   constructor() {
     this.loadNotes();
+    this.loadGoogleCalendarStatus();
   }
 
   protected notesForDate(date: string): readonly Note[] {
@@ -105,6 +115,69 @@ export class NotesCalendar {
 
     this.currentMonth.set(startOfMonth(today));
     this.selectedDate.set(toIsoDate(today));
+  }
+
+  protected connectGoogleCalendar(): void {
+    this.isGoogleCalendarAction.set(true);
+    this.googleCalendarMessage.set('');
+
+    this.googleCalendarService.getAuthorizationUrl().subscribe({
+      next: ({ url }) => window.location.assign(url),
+      error: (response: HttpErrorResponse) => {
+        this.googleCalendarMessage.set(getErrorMessage(response, 'Google Calendar could not start the connection.'));
+        this.isGoogleCalendarAction.set(false);
+      },
+    });
+  }
+
+  protected disconnectGoogleCalendar(): void {
+    this.isGoogleCalendarAction.set(true);
+    this.googleCalendarMessage.set('');
+
+    this.googleCalendarService.disconnect().subscribe({
+      next: () => {
+        this.googleCalendarStatus.set({ isConfigured: true, isConnected: false });
+        this.googleCalendarMessage.set('Google Calendar was disconnected.');
+        this.isGoogleCalendarAction.set(false);
+      },
+      error: (response: HttpErrorResponse) => {
+        this.googleCalendarMessage.set(getErrorMessage(response, 'Google Calendar could not be disconnected.'));
+        this.isGoogleCalendarAction.set(false);
+      },
+    });
+  }
+
+  protected syncNoteToGoogleCalendar(note: Note): void {
+    this.isGoogleCalendarAction.set(true);
+    this.googleCalendarMessage.set('');
+
+    this.googleCalendarService.syncNote(note.id).subscribe({
+      next: () => {
+        this.googleCalendarMessage.set(`"${note.title}" is synchronized with Google Calendar.`);
+        this.isGoogleCalendarAction.set(false);
+      },
+      error: (response: HttpErrorResponse) => {
+        this.googleCalendarMessage.set(getErrorMessage(response, 'This note could not be synchronized.'));
+        this.isGoogleCalendarAction.set(false);
+      },
+    });
+  }
+
+  protected syncAllNotesToGoogleCalendar(): void {
+    this.isGoogleCalendarAction.set(true);
+    this.googleCalendarMessage.set('');
+
+    this.googleCalendarService.syncAllNotes().subscribe({
+      next: (result) => {
+        const failedMessage = result.failed > 0 ? ` ${result.failed} could not be synchronized.` : '';
+        this.googleCalendarMessage.set(`${result.synchronized} of ${result.total} notes with due dates were synchronized.${failedMessage}`);
+        this.isGoogleCalendarAction.set(false);
+      },
+      error: (response: HttpErrorResponse) => {
+        this.googleCalendarMessage.set(getErrorMessage(response, 'Your notes could not be synchronized.'));
+        this.isGoogleCalendarAction.set(false);
+      },
+    });
   }
 
   protected statusClass(status: Note['status']): string {
@@ -144,6 +217,13 @@ export class NotesCalendar {
     });
   }
 
+  private loadGoogleCalendarStatus(): void {
+    this.googleCalendarService.getStatus().subscribe({
+      next: (status) => this.googleCalendarStatus.set(status),
+      error: () => this.googleCalendarStatus.set(null),
+    });
+  }
+
   private changeMonth(offset: number): void {
     const nextMonth = new Date(
       this.currentMonth().getFullYear(),
@@ -154,6 +234,12 @@ export class NotesCalendar {
     this.currentMonth.set(nextMonth);
     this.selectedDate.set(toIsoDate(nextMonth));
   }
+}
+
+function getErrorMessage(response: HttpErrorResponse, fallback: string): string {
+  const problem = response.error as ProblemDetails | null;
+
+  return problem?.detail ?? problem?.title ?? fallback;
 }
 
 function createCalendarDays(month: Date): CalendarDay[] {
