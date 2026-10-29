@@ -7,6 +7,7 @@ export interface Note {
   id: string;
   title: string;
   description: string | null;
+  dueDate: string | null;
   status: NoteStatus;
   priority: NotePriority;
   categories: Category[];
@@ -17,6 +18,7 @@ export interface Note {
 export interface SaveNoteFormValue {
   title: string;
   description: string;
+  dueDate: string;
   categoryIds: string[];
 }
 

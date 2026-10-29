@@ -20,6 +20,7 @@ public static class DtoMapper
             nota.Id,
             nota.Titulo,
             nota.Descricao,
+            nota.DataVencimento,
             nota.Status.ToString(),
             nota.Prioridade.ToString(),
             categorias,

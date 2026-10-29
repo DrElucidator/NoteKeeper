@@ -14,6 +14,7 @@ public sealed class Nota
     public string TituloNormalizado { get; private set; } = string.Empty;
 
     public string? Descricao { get; private set; }
+    public DateOnly? DataVencimento { get; private set; }
     public StatusNota Status { get; private set; }
     public PrioridadeNota Prioridade { get; private set; }
 
@@ -29,12 +30,13 @@ public sealed class Nota
         string titulo,
         string? descricao,
         StatusNota status,
-        PrioridadeNota prioridade = PrioridadeNota.Media)
+        PrioridadeNota prioridade = PrioridadeNota.Media,
+        DateOnly? dataVencimento = null)
     {
         Id = Guid.CreateVersion7();
         UsuarioId = usuarioId;
         CriadoEm = DateTimeOffset.UtcNow;
-        Atualizar(titulo, descricao, status, prioridade);
+        Atualizar(titulo, descricao, status, prioridade, dataVencimento);
     }
 
     public IReadOnlyList<ErroValidacao> Validar()
@@ -68,11 +70,13 @@ public sealed class Nota
         string titulo,
         string? descricao,
         StatusNota status,
-        PrioridadeNota prioridade)
+        PrioridadeNota prioridade,
+        DateOnly? dataVencimento)
     {
         Titulo = titulo?.Trim() ?? string.Empty;
         TituloNormalizado = Titulo.ToUpperInvariant();
         Descricao = string.IsNullOrWhiteSpace(descricao) ? null : descricao.Trim();
+        DataVencimento = dataVencimento;
 
         Status = status;
         Prioridade = prioridade;

@@ -10,7 +10,8 @@ public sealed record CriarNotaCommand(
     Guid UsuarioId,
     string? Titulo,
     string? Descricao,
-    IReadOnlyCollection<Guid>? CategoriaIds = null) : IRequest<Result<NotaDto>>;
+    IReadOnlyCollection<Guid>? CategoriaIds = null,
+    DateOnly? DataVencimento = null) : IRequest<Result<NotaDto>>;
 
 public sealed class CriarNotaCommandHandler(IRepositorioNota repositorio)
     : IRequestHandler<CriarNotaCommand, Result<NotaDto>>
@@ -22,7 +23,8 @@ public sealed class CriarNotaCommandHandler(IRepositorioNota repositorio)
             command.Titulo ?? string.Empty,
             command.Descricao,
             StatusNota.Pendente,
-            PrioridadeNota.Media);
+            PrioridadeNota.Media,
+            command.DataVencimento);
         var erros = nota.Validar();
 
         if (erros.Count > 0)

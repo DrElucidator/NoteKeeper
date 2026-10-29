@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   LucideArrowLeft,
   LucideCheck,
@@ -33,6 +33,7 @@ import { NotesService } from '../notes.service';
 export class NoteCreate {
   private readonly categoriesService = inject(CategoriesService);
   private readonly notesService = inject(NotesService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly pageTitle = viewChild<ElementRef<HTMLHeadingElement>>('pageTitle');
 
@@ -44,14 +45,17 @@ export class NoteCreate {
   protected readonly model = signal<SaveNoteFormValue>({
     title: '',
     description: '',
+    dueDate: '',
     categoryIds: [],
   });
+  protected readonly returnUrl = resolveReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
   protected readonly noteForm = createNoteForm(this.model);
   protected readonly titleError = signal('');
   protected readonly descriptionError = signal('');
 
   constructor() {
     afterNextRender(() => this.pageTitle()?.nativeElement.focus());
+    this.setDueDateFromCalendar();
     this.loadCategories();
   }
 
@@ -83,7 +87,7 @@ export class NoteCreate {
 
     this.notesService.create(this.model()).subscribe({
       next: () => {
-        void this.router.navigateByUrl('/workspace/notes');
+        void this.router.navigateByUrl(this.returnUrl);
       },
       error: (response: HttpErrorResponse) => {
         this.isSubmitting.set(false);
@@ -105,6 +109,14 @@ export class NoteCreate {
         this.isLoadingCategories.set(false);
       },
     });
+  }
+
+  private setDueDateFromCalendar(): void {
+    const dueDate = this.route.snapshot.queryParamMap.get('dueDate');
+
+    if (dueDate && /^\d{4}-\d{2}-\d{2}$/.test(dueDate)) {
+      this.model.update((value) => ({ ...value, dueDate }));
+    }
   }
 
   private clearApiErrors(): void {
@@ -130,4 +142,14 @@ export class NoteCreate {
       this.errorMessage.set(problem?.detail ?? 'We could not create this note. Try again.');
     }
   }
+}
+
+function resolveReturnUrl(value: string | null): string {
+  const allowedReturnUrls = [
+    '/workspace/notes',
+    '/workspace/notes/board',
+    '/workspace/notes/calendar',
+  ];
+
+  return value && allowedReturnUrls.includes(value) ? value : '/workspace/notes';
 }

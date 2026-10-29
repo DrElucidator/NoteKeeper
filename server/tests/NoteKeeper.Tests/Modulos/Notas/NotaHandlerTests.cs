@@ -35,8 +35,38 @@ public sealed class NotaHandlerTests
         Assert.True(result.IsSuccess);
         Assert.Equal("Pendente", result.Value.Status);
         Assert.Equal("Media", result.Value.Prioridade);
+        Assert.Null(result.Value.DataVencimento);
         Assert.Equal(StatusNota.Pendente, notaSalva?.Status);
         Assert.Equal(PrioridadeNota.Media, notaSalva?.Prioridade);
+        Assert.Null(notaSalva?.DataVencimento);
+    }
+
+    [Fact]
+    public async Task CriarNota_ComDataDeVencimento_PersisteAData()
+    {
+        // Arrange
+        var usuarioId = Guid.NewGuid();
+        var dataVencimento = new DateOnly(2026, 11, 15);
+        var repositorio = new Mock<IRepositorioNota>();
+        repositorio
+            .Setup(x => x.TituloExisteAsync(usuarioId, "PLANEJAR ENTREGA", null, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+        repositorio
+            .Setup(x => x.CategoriasPropriasAsync(usuarioId, It.IsAny<IReadOnlyCollection<Guid>>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Array.Empty<Guid>());
+        repositorio
+            .Setup(x => x.SalvarAsync(It.IsAny<Nota>(), It.IsAny<IReadOnlyCollection<Guid>?>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+        var handler = new CriarNotaCommandHandler(repositorio.Object);
+
+        // Act
+        var result = await handler.Handle(
+            new CriarNotaCommand(usuarioId, "Planejar entrega", null, [], dataVencimento),
+            CancellationToken.None);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.Equal(dataVencimento, result.Value.DataVencimento);
     }
 
     [Fact]

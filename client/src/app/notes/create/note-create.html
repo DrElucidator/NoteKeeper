@@ -1,6 +1,6 @@
 <section class="max-w-3xl">
   <a
-    routerLink="/workspace/notes"
+    [routerLink]="returnUrl"
     class="inline-flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-200 hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
   >
     <svg lucideArrowLeft class="size-4" aria-hidden="true"></svg>
@@ -110,6 +110,21 @@
       }
     </div>
 
+    <div class="mt-6">
+      <label for="note-due-date" class="mb-2 block text-sm font-medium text-slate-800">
+        Due date <span class="font-normal text-slate-500">(optional)</span>
+      </label>
+      <input
+        id="note-due-date"
+        type="date"
+        class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-950 outline-none transition hover:border-slate-400 focus:border-indigo-600 focus:ring-4 focus:ring-indigo-600/15"
+        [formField]="noteForm.dueDate"
+      />
+      <p class="mt-2 text-xs leading-5 text-slate-600">
+        Add a date to place this note in your calendar.
+      </p>
+    </div>
+
     <fieldset class="mt-8 border-t border-slate-200 pt-7">
       <legend class="text-sm font-semibold text-slate-800">Categories</legend>
       <p class="mt-1 text-sm leading-6 text-slate-600">
@@ -160,7 +175,7 @@
 
     <div class="mt-8 flex flex-wrap justify-end gap-3">
       <a
-        routerLink="/workspace/notes"
+        [routerLink]="returnUrl"
         class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
         >Cancel</a
       >

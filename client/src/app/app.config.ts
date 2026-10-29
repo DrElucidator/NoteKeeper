@@ -78,6 +78,11 @@ const routes: Routes = [
           import('./notes/board/notes-board').then((component) => component.NotesBoard),
       },
       {
+        path: 'notes/calendar',
+        loadComponent: () =>
+          import('./notes/calendar/notes-calendar').then((component) => component.NotesCalendar),
+      },
+      {
         path: 'notes',
         loadComponent: () =>
           import('./notes/list/notes-list').then((component) => component.NotesList),

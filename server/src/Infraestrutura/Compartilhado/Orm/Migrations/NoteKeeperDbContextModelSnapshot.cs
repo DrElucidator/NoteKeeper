@@ -129,6 +129,9 @@ namespace NoteKeeper.Infraestrutura.Compartilhado.Orm.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
+                    b.Property<DateOnly?>("DataVencimento")
+                        .HasColumnType("date");
+
                     b.Property<string>("Prioridade")
                         .IsRequired()
                         .HasMaxLength(20)

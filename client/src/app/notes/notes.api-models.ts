@@ -4,6 +4,7 @@ export interface NoteResponse {
   id: string;
   titulo: string;
   descricao: string | null;
+  dataVencimento: string | null;
   status: string;
   prioridade: string;
   categorias: CategoryResponse[];
@@ -14,6 +15,7 @@ export interface NoteResponse {
 export interface CreateNoteRequest {
   titulo: string;
   descricao: string | null;
+  dataVencimento: string | null;
   categoriaIds: string[];
 }
 

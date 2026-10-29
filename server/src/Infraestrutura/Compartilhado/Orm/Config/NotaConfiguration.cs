@@ -21,6 +21,9 @@ public sealed class NotaConfiguration : IEntityTypeConfiguration<Nota>
         builder.Property(nota => nota.Descricao)
             .HasMaxLength(Nota.TamanhoMaximoDescricao);
 
+        builder.Property(nota => nota.DataVencimento)
+            .HasColumnType("date");
+
         builder.Property(nota => nota.Status)
             .HasConversion<string>()
             .HasMaxLength(20)

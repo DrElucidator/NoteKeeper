@@ -13,7 +13,8 @@ public sealed record AtualizarNotaCommand(
     string? Descricao,
     string? Status,
     IReadOnlyCollection<Guid>? CategoriaIds,
-    string? Prioridade) : IRequest<Result<NotaDto>>;
+    string? Prioridade,
+    DateOnly? DataVencimento = null) : IRequest<Result<NotaDto>>;
 
 public sealed class AtualizarNotaCommandHandler(IRepositorioNota repositorio)
     : IRequestHandler<AtualizarNotaCommand, Result<NotaDto>>
@@ -44,7 +45,12 @@ public sealed class AtualizarNotaCommandHandler(IRepositorioNota repositorio)
                     "prioridade"));
         }
 
-        nota.Atualizar(command.Titulo ?? string.Empty, command.Descricao, status, prioridade);
+        nota.Atualizar(
+            command.Titulo ?? string.Empty,
+            command.Descricao,
+            status,
+            prioridade,
+            command.DataVencimento);
         var erros = nota.Validar();
 
         if (erros.Count > 0)

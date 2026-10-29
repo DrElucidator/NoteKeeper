@@ -19,6 +19,7 @@ export function toNote(response: NoteResponse): Note {
     id: response.id,
     title: response.titulo,
     description: response.descricao,
+    dueDate: response.dataVencimento,
     status: toNoteStatus(response.status),
     priority: toNotePriority(response.prioridade),
     categories: response.categorias.map(toCategory),
@@ -31,6 +32,7 @@ export function toCreateNoteRequest(value: SaveNoteFormValue): CreateNoteRequest
   return {
     titulo: value.title.trim(),
     descricao: toOptionalDescription(value.description),
+    dataVencimento: toOptionalDueDate(value.dueDate),
     categoriaIds: uniqueCategoryIds(value.categoryIds),
   };
 }
@@ -115,6 +117,10 @@ function toOptionalDescription(value: string): string | null {
   const description = value.trim();
 
   return description || null;
+}
+
+function toOptionalDueDate(value: string): string | null {
+  return value || null;
 }
 
 function uniqueCategoryIds(categoryIds: string[]): string[] {

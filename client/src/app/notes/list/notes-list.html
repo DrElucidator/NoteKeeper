@@ -35,6 +35,13 @@
           <svg lucideColumns3 class="size-4" aria-hidden="true"></svg>
           Board
         </a>
+        <a
+          routerLink="/workspace/notes/calendar"
+          class="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-600 transition hover:text-slate-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+        >
+          <svg lucideCalendarDays class="size-4" aria-hidden="true"></svg>
+          Calendar
+        </a>
       </nav>
       <a
         routerLink="/workspace/notes/new"
@@ -446,6 +453,13 @@
               </button>
             </div>
           </div>
+
+          @if (note.dueDate) {
+            <p class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-medium text-slate-600">
+              <svg lucideCalendarDays class="size-3.5" aria-hidden="true"></svg>
+              Due {{ note.dueDate | date: 'MMM d, y' : 'UTC' }}
+            </p>
+          }
 
           @if (note.description) {
             <p class="mt-3 line-clamp-3 text-sm leading-6 text-slate-600">{{ note.description }}</p>

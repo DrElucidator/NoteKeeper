@@ -64,6 +64,7 @@ export class NoteEdit {
   protected readonly model = signal<UpdateNoteFormValue>({
     title: '',
     description: '',
+    dueDate: '',
     categoryIds: [],
     status: 'Pending',
     priority: 'Medium',
@@ -132,6 +133,7 @@ export class NoteEdit {
         this.model.set({
           title: note.title,
           description: note.description ?? '',
+          dueDate: note.dueDate ?? '',
           categoryIds: note.categories.map((category) => category.id),
           status: note.status,
           priority: note.priority,

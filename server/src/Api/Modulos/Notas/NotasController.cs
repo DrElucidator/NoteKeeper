@@ -10,7 +10,8 @@ namespace NoteKeeper.Api.Modulos.Notas;
 public sealed record CriarNotaRequest(
     string? Titulo,
     string? Descricao,
-    IReadOnlyCollection<Guid>? CategoriaIds
+    IReadOnlyCollection<Guid>? CategoriaIds,
+    DateOnly? DataVencimento
 );
 
 public sealed record AtualizarNotaRequest(
@@ -18,7 +19,8 @@ public sealed record AtualizarNotaRequest(
     string? Descricao,
     string? Status,
     IReadOnlyCollection<Guid>? CategoriaIds,
-    string? Prioridade
+    string? Prioridade,
+    DateOnly? DataVencimento
 );
 
 public sealed record AtualizarStatusNotaRequest(string? Status);
@@ -54,7 +56,8 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
             UserId(),
             request.Titulo,
             request.Descricao,
-            request.CategoriaIds);
+            request.CategoriaIds,
+            request.DataVencimento);
 
         var result = await mediator.Send(command, ct);
 
@@ -73,7 +76,8 @@ public sealed class NotasController(IMediator mediator) : ControllerBase
             request.Descricao,
             request.Status,
             request.CategoriaIds,
-            request.Prioridade);
+            request.Prioridade,
+            request.DataVencimento);
 
         var result = await mediator.Send(command, ct);
 
